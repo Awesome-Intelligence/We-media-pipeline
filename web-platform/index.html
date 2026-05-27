@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创作方舟</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f7f6f3;
+      --bg-hover: #efefef;
+      --bg-active: #e9e9e7;
+      --text: #37352f;
+      --text-secondary: #787774;
+      --text-tertiary: #9b9b9a;
+      --border: #e9e9e7;
+      --accent: #2eaadc;
+      --accent-light: #eaf3fb;
+      --red: #eb5757;
+      --radius: 3px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06);
+      --font: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar - Notion style */
+    .sidebar {
+      width: 220px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-top {
+      padding: 10px 8px 6px;
+    }
+
+    .workspace-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+    }
+
+    .workspace-btn:hover { background: var(--bg-hover); }
+
+    .workspace-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--text);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 2px 8px;
+      overflow-y: auto;
+    }
+
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      padding: 10px 8px 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.1s ease;
+      user-select: none;
+    }
+
+    .nav-item:hover { background: var(--bg-hover); }
+    .nav-item.active { background: var(--bg-active); color: var(--text); }
+    .nav-item.active .nav-icon { color: var(--text); }
+
+    .nav-icon {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+
+    .nav-item span { flex: 1; }
+
+    .nav-arrow {
+      width: 14px;
+      height: 14px;
+      color: var(--text-tertiary);
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+
+    .nav-item:hover .nav-arrow { opacity: 1; }
+
+    /* Main */
+    .main {
+      flex: 1;
+      margin-left: 220px;
+      min-height: 100vh;
+    }
+
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 96px;
+    }
+
+    /* Page header - Notion style title */
+    .page-header {
+      margin-bottom: 20px;
+    }
+
+    .page-emoji {
+      font-size: 78px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .page-title {
+      font-size: 36px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--text-tertiary);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+
+    /* Section - Notion style */
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .section-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .section-title:hover { color: var(--text); }
+
+    /* Input area - Notion inline style */
+    .input-block {
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 15px;
+      font-family: var(--font);
+      color: var(--text);
+      padding: 5px 8px;
+      border-radius: var(--radius);
+      transition: background 0.1s ease;
+    }
+
+    .input-block:hover { background: var(--bg-secondary); }
+    .input-block:focus { background: var(--accent-light); }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .input-row .input-block { flex: 1; }
+    .input-row .input-block:first-child { flex: 2; }
+
+    select.input-block {
+      cursor: pointer;
+      background: var(--bg-secondary);
+    }
+
+    select.input-block:hover { background: var(--bg-hover); }
+
+    /* Button - Notion style */
+    .btn {
+      padding: 4px 10px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: background 0.1s ease;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: var(--text);
+      color: white;
+    }
+
+    .btn-primary:hover { background: #2d2d2d; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+    }
+
+    .btn-secondary:hover { background: var(--bg-secondary); color: var(--text); }
+
+    /* Content blocks - Notion style */
+    .block {
+      padding: 4px 8px;
+      margin: 2px 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+
+    .block:hover { background: var(--bg-secondary); }
+
+    .block-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .block-meta {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .block-content {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* Progress bar - Notion minimal */
+    .progress {
+      margin: 20px 0;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .progress-label {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .progress-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .progress-track {
+      height: 3px;
+      background: var(--bg-secondary);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--text);
+      transition: width 0.3s ease;
+    }
+
+    /* Steps - Notion list style */
+    .steps {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+
+    .step:hover { background: var(--bg-secondary); }
+    .step.active { background: var(--accent-light); }
+
+    .step-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.15s ease;
+    }
+
+    .step.active .step-dot {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .step.completed .step-dot {
+      border-color: var(--text);
+      background: var(--text);
+    }
+
+    .step-dot svg {
+      width: 10px;
+      height: 10px;
+      fill: white;
+      opacity: 0;
+    }
+
+    .step.completed .step-dot svg,
+    .step.active .step-dot svg { opacity: 1; fill: white; }
+
+    .step-info { flex: 1; }
+
+    .step-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .step-desc {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .step-status {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    /* News list */
+    .news-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .news-item {
+      padding: 10px 8px;
+      border-radius: var(--radius);
+    }
+
+    .news-item:hover { background: var(--bg-secondary); }
+
+    .news-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 3px;
+      line-height: 1.4;
+    }
+
+    .news-meta {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .news-source { color: var(--accent); }
+    .news-content {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* Article */
+    .article-content {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .article-content h1 { font-size: 28px; font-weight: 600; margin: 20px 0 14px; letter-spacing: -0.3px; }
+    .article-content h2 { font-size: 18px; font-weight: 600; margin: 16px 0 10px; }
+    .article-content p { margin-bottom: 10px; }
+    .article-content .img-placeholder {
+      display: block;
+      width: 100%;
+      height: 140px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      margin: 12px 0;
+      border: 1px dashed var(--border);
+    }
+
+    /* Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 16/10;
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .gallery-item:hover { opacity: 0.9; }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Video */
+    .video-block {
+      background: #1a1a1a;
+      border-radius: var(--radius);
+      aspect-ratio: 9/16;
+      max-width: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+    }
+
+    .video-block svg {
+      width: 36px;
+      height: 36px;
+      fill: #555;
+    }
+
+    /* Files */
+    .files {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: var(--radius);
+    }
+
+    .file-item:hover { background: var(--bg-secondary); }
+
+    .file-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--text-tertiary);
+    }
+
+    .file-info { flex: 1; }
+
+    .file-name {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .file-path {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-family: monospace;
+    }
+
+    /* Modal - Notion style */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+
+    .modal {
+      width: 480px;
+      background: var(--bg);
+      border-radius: 6px;
+      box-shadow: var(--shadow), 0 8px 30px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-tertiary);
+    }
+
+    .modal-close:hover { background: var(--bg-hover); color: var(--text); }
+
+    .modal-close svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .modal-body { padding: 20px; }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-family: monospace;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+    }
+
+    .form-input:focus { border-color: var(--accent); background: var(--accent-light); }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
+    .dir-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dir-input-row .form-input {
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 10px 20px;
+      background: var(--text);
+      color: white;
+      font-size: 14px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1100;
+      transition: transform 0.3s ease;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); }
+
+    /* Empty state */
+    .empty {
+      padding: 24px 8px;
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+
+    /* Error state */
+    .error-block {
+      padding: 16px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .error-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .error-msg {
+      font-size: 13px;
+      color: #dc2626;
+      line-height: 1.5;
+    }
+
+    .step.error .step-dot {
+      border-color: var(--red);
+      background: var(--red);
+    }
+
+    .step.error .step-name {
+      color: var(--red);
+    }
+
+    /* History items */
+    .history-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .history-topic {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .history-date {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .history-preview {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .history-news-item {
+      padding: 2px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Video grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .video-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-secondary);
+    }
+
+    .video-card img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
+
+    .video-placeholder {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #1a1a1a;
+    }
+
+    .video-info {
+      padding: 8px;
+    }
+
+    .video-title {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .video-date {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    /* Log viewer */
+    .log-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .log-auto-scroll {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .log-auto-scroll input {
+      cursor: pointer;
+    }
+
+    .log-container {
+      background: #1a1a1a;
+      border-radius: var(--radius);
+      padding: 12px;
+      max-height: 500px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .log-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .log-container::-webkit-scrollbar-track {
+      background: #2a2a2a;
+    }
+
+    .log-container::-webkit-scrollbar-thumb {
+      background: #444;
+      border-radius: 3px;
+    }
+
+    .log-entry {
+      padding: 2px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-time {
+      color: #666;
+      margin-right: 8px;
+    }
+
+    .log-level {
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+
+    .log-level.info {
+      background: #2eaadc33;
+      color: #2eaadc;
+    }
+
+    .log-level.success {
+      background: #00ff8833;
+      color: #00ff88;
+    }
+
+    .log-level.warning {
+      background: #ff8c0033;
+      color: #ff8c00;
+    }
+
+    .log-level.error {
+      background: #eb575733;
+      color: #eb5757;
+    }
+
+    .log-message {
+      color: #e0e0e0;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { width: 60px; }
+      .sidebar-top { padding: 12px 8px; }
+      .workspace-btn span { display: none; }
+      .workspace-icon { margin: 0 auto; }
+      .nav-item span { display: none; }
+      .nav-arrow { display: none; }
+      .nav-section-label { display: none; }
+      .main { margin-left: 60px; }
+      .page-content { padding: 60px 32px; }
+    }
+
+    @media (max-width: 600px) {
+      .page-content { padding: 40px 20px; }
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <button class="workspace-btn">
+          <div class="workspace-icon">创</div>
+          <span>创作方舟</span>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">工作区</div>
+        
+        <div class="nav-item active" data-page="workspace">
+          <div class="nav-icon">🏠</div>
+          <span>工作台</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+
+        <div class="nav-item" data-page="news">
+          <div class="nav-icon">📰</div>
+          <span>新闻库</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+
+        <div class="nav-item" data-page="articles">
+          <div class="nav-icon">📝</div>
+          <span>文章库</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+
+        <div class="nav-item" data-page="videos">
+          <div class="nav-icon">🎬</div>
+          <span>视频库</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+
+        <div class="nav-section-label">工具</div>
+
+        <div class="nav-item" data-page="logs">
+          <div class="nav-icon">📋</div>
+          <span>运行日志</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+
+        <div class="nav-section-label">设置</div>
+
+        <div class="nav-item" id="openSettings">
+          <div class="nav-icon">⚙️</div>
+          <span>设置</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <div class="page-content" id="pageContent">
+        <!-- 工作台页面 -->
+        <div class="page-view" id="view-workspace">
+          <div class="page-header">
+            <div class="page-emoji">🚀</div>
+            <h1 class="page-title">自媒体创作平台</h1>
+            <p class="page-subtitle">输入主题，一键生成文章、配图和视频</p>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Input section -->
+          <div class="section">
+            <div class="section-header">
+              <div class="section-icon">✏️</div>
+              <span class="section-title">创作主题</span>
+            </div>
+            <div class="input-row">
+              <input type="text" class="input-block" id="topicInput" placeholder="输入创作主题，如：人工智能最新进展">
+              <select class="input-block" id="daysSelect">
+                <option value="7">最近 7 天</option>
+                <option value="14">最近 14 天</option>
+                <option value="30">最近 30 天</option>
+              </select>
+              <button class="btn btn-primary" id="startBtn">开始创作</button>
+            </div>
+          </div>
+
+          <!-- Steps progress -->
+          <div class="section">
+            <div class="section-header">
+              <div class="section-icon">📊</div>
+              <span class="section-title">创作进度</span>
+            </div>
+            <div class="steps" id="stepsContainer">
+              <div class="step active" data-step="1">
+                <div class="step-dot">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <div class="step-info">
+                  <div class="step-name">新闻搜索</div>
+                  <div class="step-desc">获取最新资讯</div>
+                </div>
+                <div class="step-status">待执行</div>
+              </div>
+              <div class="step" data-step="2">
+                <div class="step-dot">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <div class="step-info">
+                  <div class="step-name">文章生成</div>
+                  <div class="step-desc">生成公众号文章</div>
+                </div>
+                <div class="step-status">待执行</div>
+              </div>
+              <div class="step" data-step="3">
+                <div class="step-dot">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <div class="step-info">
+                  <div class="step-name">配图搜索</div>
+                  <div class="step-desc">自动匹配配图</div>
+                </div>
+                <div class="step-status">待执行</div>
+              </div>
+              <div class="step" data-step="4">
+                <div class="step-dot">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <div class="step-info">
+                  <div class="step-name">文档导出</div>
+                  <div class="step-desc">生成 Word 文档</div>
+                </div>
+                <div class="step-status">待执行</div>
+              </div>
+              <div class="step" data-step="5">
+                <div class="step-dot">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <div class="step-info">
+                  <div class="step-name">内容提炼</div>
+                  <div class="step-desc">生成视频配置</div>
+                </div>
+                <div class="step-status">待执行</div>
+              </div>
+              <div class="step" data-step="6">
+                <div class="step-dot">
+                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <div class="step-info">
+                  <div class="step-name">视频生成</div>
+                  <div class="step-desc">生成短视频</div>
+                </div>
+                <div class="step-status">待执行</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress bar -->
+          <div class="progress">
+            <div class="progress-header">
+              <span class="progress-label">完成度</span>
+              <span class="progress-value" id="progressValue">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- News results -->
+          <div class="section" id="newsSection">
+            <div class="section-header">
+              <div class="section-icon">📰</div>
+              <span class="section-title">新闻搜索</span>
+            </div>
+            <div id="newsContainer">
+              <div class="empty">输入主题后开始创作</div>
+            </div>
+          </div>
+
+          <!-- Article -->
+          <div class="section" id="articleSection">
+            <div class="section-header">
+              <div class="section-icon">📝</div>
+              <span class="section-title">生成文章</span>
+            </div>
+            <div id="articleContainer">
+              <div class="empty">新闻搜索后自动生成</div>
+            </div>
+          </div>
+
+          <!-- Images -->
+          <div class="section" id="imageSection">
+            <div class="section-header">
+              <div class="section-icon">🖼️</div>
+              <span class="section-title">配图展示</span>
+            </div>
+            <div id="imageContainer">
+              <div class="empty">文章生成后自动搜索</div>
+            </div>
+          </div>
+
+          <!-- Video -->
+          <div class="section" id="videoSection">
+            <div class="section-header">
+              <div class="section-icon">🎬</div>
+              <span class="section-title">视频预览</span>
+            </div>
+            <div id="videoContainer">
+              <div class="empty">内容提炼后自动生成</div>
+            </div>
+          </div>
+
+          <!-- Output files -->
+          <div class="section" id="outputSection">
+            <div class="section-header">
+              <div class="section-icon">📁</div>
+              <span class="section-title">成果文件</span>
+            </div>
+            <div id="outputContainer">
+              <div class="empty">创作完成后显示成果文件</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 新闻库页面 -->
+        <div class="page-view" id="view-news" style="display: none;">
+          <div class="page-header">
+            <div class="page-emoji">📰</div>
+            <h1 class="page-title">新闻库</h1>
+            <p class="page-subtitle">已搜索的新闻列表</p>
+          </div>
+          <div class="divider"></div>
+          <div class="section">
+            <div class="input-row">
+              <input type="text" class="input-block" id="newsSearchInput" placeholder="搜索新闻...">
+              <button class="btn btn-primary" id="searchNewsBtn">搜索</button>
+            </div>
+          </div>
+          <div class="section">
+            <div id="newsLibraryContainer">
+              <div class="empty">暂无新闻记录</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 文章库页面 -->
+        <div class="page-view" id="view-articles" style="display: none;">
+          <div class="page-header">
+            <div class="page-emoji">📝</div>
+            <h1 class="page-title">文章库</h1>
+            <p class="page-subtitle">已生成的文章列表</p>
+          </div>
+          <div class="divider"></div>
+          <div class="section">
+            <div id="articlesLibraryContainer">
+              <div class="empty">暂无文章记录</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 视频库页面 -->
+        <div class="page-view" id="view-videos" style="display: none;">
+          <div class="page-header">
+            <div class="page-emoji">🎬</div>
+            <h1 class="page-title">视频库</h1>
+            <p class="page-subtitle">已生成的视频列表</p>
+          </div>
+          <div class="divider"></div>
+          <div class="section">
+            <div id="videosLibraryContainer">
+              <div class="empty">暂无视频记录</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 日志页面 -->
+        <div class="page-view" id="view-logs" style="display: none;">
+          <div class="page-header">
+            <div class="page-emoji">📋</div>
+            <h1 class="page-title">运行日志</h1>
+            <p class="page-subtitle">实时查看系统运行状态</p>
+          </div>
+          <div class="divider"></div>
+          <div class="section">
+            <div class="log-toolbar">
+              <button class="btn btn-secondary" id="clearLogsBtn">清空日志</button>
+              <label class="log-auto-scroll">
+                <input type="checkbox" id="autoScrollCheck" checked>
+                <span>自动滚动</span>
+              </label>
+            </div>
+            <div class="log-container" id="logContainer">
+              <div class="empty">暂无日志记录</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Settings modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">API 配置</h3>
+        <button class="modal-close" id="closeSettings">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Tavily API Key（新闻搜索）</label>
+          <input type="password" class="form-input" id="tavilyKey" placeholder="tvly-xxxxxxxx">
+          <p class="form-hint">免费额度 1000 次/月 · tavily.com</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">MiniMax API Key（文章生成）</label>
+          <input type="password" class="form-input" id="minimaxKey" placeholder="sk-cp-xxxxxxxx">
+          <p class="form-hint">用于调用大模型生成文章</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pexels API Key（配图搜索）</label>
+          <input type="password" class="form-input" id="pexelsKey" placeholder="xxxxxxxx">
+          <p class="form-hint">免费额度 200 请求/小时 · pexels.com/api</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">输出目录</label>
+          <div class="dir-input-row">
+            <input type="text" class="form-input" id="outputDir" placeholder="点击按钮选择输出文件夹">
+            <button class="btn btn-secondary" id="selectDirBtn">选择文件夹</button>
+          </div>
+          <p class="form-hint">生成文件将保存在此目录（需后端支持目录写入）</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelSettings">取消</button>
+        <button class="btn btn-primary" id="saveSettings">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = 'http://localhost:8083/api';
+
+    const STEPS = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '' };
+
+    let state = {
+      topic: '',
+      news: [],
+      article: '',
+      images: [],
+      files: [],
+      outputDir: ''
+    };
+
+    const $ = id => document.getElementById(id);
+
+    // 历史数据管理
+    function getHistory() {
+      const h = localStorage.getItem('creatorHistory');
+      return h ? JSON.parse(h) : { news: [], articles: [], videos: [] };
+    }
+
+    function saveHistory(history) {
+      localStorage.setItem('creatorHistory', JSON.stringify(history));
+    }
+
+    function addToHistory(type, item) {
+      const h = getHistory();
+      h[type].unshift(item);
+      if (h[type].length > 50) h[type] = h[type].slice(0, 50);
+      saveHistory(h);
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return `${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function toast(msg, type = '') {
+      const t = $('toast');
+      t.textContent = msg;
+      t.className = `toast show ${type}`;
+      setTimeout(() => t.className = 'toast', 3000);
+    }
+
+    function updateProgress() {
+      const done = Object.values(STEPS).filter(s => s === 'success').length;
+      const pct = Math.round((done / 6) * 100);
+      $('progressValue').textContent = pct + '%';
+      $('progressFill').style.width = pct + '%';
+    }
+
+    function setStep(step, status, errorMsg = '') {
+      STEPS[step] = status;
+      const el = document.querySelector(`.step[data-step="${step}"]`);
+      if (!el) return;
+      const statusEl = el.querySelector('.step-status');
+      const labels = { pending: '待执行', running: '执行中', success: '已完成', error: '失败' };
+      el.className = `step ${status === 'success' ? 'completed' : status === 'running' ? 'active' : status === 'error' ? 'error' : ''}`;
+      if (statusEl) statusEl.textContent = errorMsg || labels[status] || status;
+    }
+
+    function renderError(container, msg) {
+      $(container).innerHTML = `<div class="error-block">
+        <div class="error-icon">⚠️</div>
+        <div class="error-msg">${msg}</div>
+      </div>`;
+    }
+
+    class ApiClient {
+      constructor(base) { this.base = base; }
+      async req(endpoint, opts = {}) {
+        try {
+          const res = await fetch(this.base + endpoint, {
+            ...opts,
+            headers: { 'Content-Type': 'application/json', ...opts.headers },
+            body: opts.body ? JSON.stringify(opts.body) : undefined
+          });
+          if (!res.ok) {
+            const e = await res.json().catch(() => ({ error: 'Request failed' }));
+            throw new Error(e.error || `HTTP ${res.status}`);
+          }
+          return await res.json();
+        } catch (e) {
+          if (e.name === 'TypeError') throw new Error('无法连接服务器，请确保后端已启动');
+          throw e;
+        }
+      }
+      async getConfig() { return this.req('/config'); }
+      async saveConfig(cfg) { return this.req('/config', { method: 'POST', body: cfg }); }
+      async searchNews(q, days, n = 10) { return this.req('/news/search', { method: 'POST', body: { query: q, days, num: n } }); }
+      async searchImages(q, n = 6) { return this.req('/images/search', { method: 'POST', body: { query: q, num: n } }); }
+      async exportWord(md, title) { return this.req('/word/export', { method: 'POST', body: { markdown: md, title } }); }
+      async generateVideo(cfg, imgs) { return this.req('/video/generate', { method: 'POST', body: { content_json: cfg, images: imgs } }); }
+    }
+
+    const api = new ApiClient(API_BASE);
+
+    async function runStep(step) {
+      setStep(step, 'running');
+      try {
+        switch (step) {
+          case 1: await stepNews(); break;
+          case 2: await stepArticle(); break;
+          case 3: await stepImages(); break;
+          case 4: await stepWord(); break;
+          case 5: await stepShorten(); break;
+          case 6: await stepVideo(); break;
+        }
+        setStep(step, 'success');
+        return true;
+      } catch (e) {
+        setStep(step, 'error', e.message);
+        toast(e.message, 'error');
+        return false;
+      } finally {
+        updateProgress();
+      }
+    }
+
+    async function stepNews() {
+      const topic = $('topicInput').value.trim();
+      const days = parseInt($('daysSelect').value);
+      if (!topic) throw new Error('请输入创作主题');
+      state.topic = topic;
+      toast('正在搜索新闻...');
+      logger.info(`搜索新闻: ${topic}, 时间范围: 最近${days}天`);
+      try {
+        const r = await api.searchNews(topic, days, 10);
+        state.news = r.results?.results || [];
+        if (state.news.length === 0) {
+          logger.warn('未找到相关新闻');
+          renderError('newsContainer', '未找到相关新闻，请尝试其他关键词或扩大搜索时间范围');
+          throw new Error('未找到相关新闻');
+        } else {
+          logger.success(`找到 ${state.news.length} 条新闻`);
+          addToHistory('news', {
+            topic,
+            date: new Date().toISOString(),
+            results: state.news.slice(0, 5)
+          });
+        }
+        renderNews();
+      } catch (e) {
+        logger.error('搜索失败: ' + e.message);
+        renderError('newsContainer', e.message);
+        throw e;
+      }
+    }
+
+    function renderNews() {
+      if (!state.news.length) {
+        $('newsContainer').innerHTML = '<div class="empty">未找到相关新闻</div>';
+        return;
+      }
+      $('newsContainer').innerHTML = `<div class="news-list">
+        ${state.news.map(n => `<div class="news-item">
+          <div class="news-title">${n.title}</div>
+          <div class="news-meta"><span class="news-source">${n.source || ''}</span><span>${n.published_date || ''}</span></div>
+          ${n.content ? `<div class="news-content">${n.content}</div>` : ''}
+        </div>`).join('')}
+      </div>`;
+    }
+
+    async function stepArticle() {
+      if (!state.news.length) {
+        throw new Error('新闻搜索未成功，无法生成文章');
+      }
+      toast('正在生成文章...');
+      logger.info('开始生成文章...');
+      state.article = generateMockArticle();
+      logger.success('文章生成完成');
+      addToHistory('articles', {
+        topic: state.topic,
+        date: new Date().toISOString(),
+        content: state.article.substring(0, 200)
+      });
+      renderArticle();
+    }
+
+    function generateMockArticle() {
+      return `<h1>${state.topic}：行业洞察与发展趋势</h1>
+<p>在当今快速变化的商业环境中，${state.topic}已成为最受关注的焦点之一。本文将深入分析其最新动态、市场影响以及未来发展趋势。</p>
+<h2>一、行业现状</h2>
+<p>近期多项数据显示，${state.topic}领域正在经历前所未有的变革。从技术创新到市场应用，从政策支持到资本涌入，各方力量共同推动着这一领域的高速发展。</p>
+<span class="img-placeholder">[[IMG: 行业数据图表]]</span>
+<h2>二、核心驱动力</h2>
+<p>专家指出，推动${state.topic}发展的主要有三大核心驱动力：技术创新、资本支持和政策红利。这些因素相互交织，形成了强大的发展合力。</p>
+<h2>三、发展前景</h2>
+<p>展望未来，${state.topic}有望继续保持高速增长态势。随着技术不断成熟和应用场景持续拓展，我们将迎来更加广阔的发展空间。</p>
+<span class="img-placeholder">[[IMG: 未来发展蓝图]]</span>
+<h2>四、总结</h2>
+<p>综上所述，${state.topic}正处于历史性的发展机遇期。对于从业者和投资者而言，把握当下时机、积极布局将是制胜的关键。</p>`;
+    }
+
+    function renderArticle() {
+      $('articleContainer').innerHTML = `<div class="article-content">${state.article}</div>`;
+    }
+
+    async function stepImages() {
+      if (!state.article) throw new Error('请先生成文章');
+      toast('正在搜索配图...');
+      try {
+        const r = await api.searchImages(state.topic, 6);
+        state.images = r.images || [];
+      } catch (e) {
+        state.images = [];
+        renderError('imageContainer', '配图搜索失败: ' + e.message);
+        throw e;
+      }
+      if (!state.images.length) {
+        state.images = Array.from({ length: 6 }, (_, i) => ({
+          url: `https://picsum.photos/400/300?random=${i}`,
+          title: `配图 ${i + 1}`
+        }));
+      }
+      renderImages();
+    }
+
+    function renderImages() {
+      $('imageContainer').innerHTML = `<div class="gallery">
+        ${state.images.map(img => `<div class="gallery-item"><img src="${img.url}" alt="${img.title}" loading="lazy"></div>`).join('')}
+      </div>`;
+    }
+
+    async function stepWord() {
+      if (!state.article) throw new Error('请先生成文章');
+      toast('正在导出 Word...');
+      try {
+        const r = await api.exportWord(state.article, state.topic);
+        state.files.push({ name: 'article.docx', path: r.path || '' });
+      } catch (e) {
+        state.files.push({ name: 'article.docx', path: '导出失败' });
+        renderFiles();
+        throw new Error('Word导出失败: ' + e.message);
+      }
+      renderFiles();
+    }
+
+    async function stepShorten() {
+      if (!state.article) throw new Error('请先生成文章');
+      toast('正在提炼视频内容...');
+      state.files.push({ name: 'content.json', path: '' });
+      renderFiles();
+    }
+
+    async function stepVideo() {
+      toast('正在生成视频...');
+      logger.info('开始生成视频...');
+      addToHistory('videos', {
+        topic: state.topic,
+        date: new Date().toISOString(),
+        thumbnail: state.images[0]?.url || ''
+      });
+      logger.success('视频生成完成');
+      state.files.push({ name: 'article.mp4', path: '' });
+      $('videoContainer').innerHTML = '<div class="video-block"><svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></div>';
+      renderFiles();
+    }
+
+    // 加载库页面数据
+    function loadNewsLibrary() {
+      const h = getHistory();
+      if (!h.news.length) {
+        $('newsLibraryContainer').innerHTML = '<div class="empty">暂无新闻记录</div>';
+        return;
+      }
+      $('newsLibraryContainer').innerHTML = h.news.map(item => `
+        <div class="history-item">
+          <div class="history-header">
+            <span class="history-topic">${item.topic}</span>
+            <span class="history-date">${formatDate(item.date)}</span>
+          </div>
+          <div class="history-preview">
+            ${item.results.slice(0, 3).map(n => `<div class="history-news-item">• ${n.title}</div>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function loadArticlesLibrary() {
+      const h = getHistory();
+      if (!h.articles.length) {
+        $('articlesLibraryContainer').innerHTML = '<div class="empty">暂无文章记录</div>';
+        return;
+      }
+      $('articlesLibraryContainer').innerHTML = h.articles.map(item => `
+        <div class="history-item">
+          <div class="history-header">
+            <span class="history-topic">${item.topic}</span>
+            <span class="history-date">${formatDate(item.date)}</span>
+          </div>
+          <div class="history-preview">${item.content}...</div>
+        </div>
+      `).join('');
+    }
+
+    function loadVideosLibrary() {
+      const h = getHistory();
+      if (!h.videos.length) {
+        $('videosLibraryContainer').innerHTML = '<div class="empty">暂无视频记录</div>';
+        return;
+      }
+      $('videosLibraryContainer').innerHTML = `<div class="video-grid">
+        ${h.videos.map(item => `
+          <div class="video-card">
+            ${item.thumbnail ? `<img src="${item.thumbnail}" alt="${item.topic}">` : '<div class="video-placeholder"></div>'}
+            <div class="video-info">
+              <span class="video-title">${item.topic}</span>
+              <span class="video-date">${formatDate(item.date)}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+    }
+
+    // 日志系统
+    const LOG_MAX = 500;
+    let logs = [];
+
+    function addLog(level, message) {
+      const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      logs.push({ time, level, message });
+      if (logs.length > LOG_MAX) logs = logs.slice(-LOG_MAX);
+      renderLogs();
+    }
+
+    const logger = {
+      info: (msg) => addLog('info', msg),
+      success: (msg) => addLog('success', msg),
+      warn: (msg) => addLog('warning', msg),
+      error: (msg) => addLog('error', msg)
+    };
+
+    function renderLogs() {
+      if (!logs.length) {
+        $('logContainer').innerHTML = '<div class="empty" style="color:#666;">暂无日志记录</div>';
+        return;
+      }
+      $('logContainer').innerHTML = logs.map(log => `
+        <div class="log-entry">
+          <span class="log-time">${log.time}</span>
+          <span class="log-level ${log.level}">${log.level.toUpperCase()}</span>
+          <span class="log-message">${escapeHtml(log.message)}</span>
+        </div>
+      `).join('');
+      if ($('autoScrollCheck').checked) {
+        $('logContainer').scrollTop = $('logContainer').scrollHeight;
+      }
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function clearLogs() {
+      logs = [];
+      renderLogs();
+    }
+
+    function renderFiles() {
+      if (!state.files.length) {
+        $('outputContainer').innerHTML = '<div class="empty">创作完成后显示成果文件</div>';
+        return;
+      }
+      const icon = '<svg class="file-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>';
+      $('outputContainer').innerHTML = `<div class="files">
+        ${state.files.map(f => `<div class="file-item">${icon}<div class="file-info"><div class="file-name">${f.name}</div><div class="file-path">${f.path || '生成中...'}</div></div></div>`).join('')}
+      </div>`;
+    }
+
+    async function loadConfig() {
+      try {
+        const r = await api.getConfig();
+        if (r.success && r.config) {
+          $('tavilyKey').value = r.config.tavily_api_key || '';
+          $('minimaxKey').value = r.config.minimax_api_key || '';
+          $('pexelsKey').value = r.config.pexels_api_key || '';
+          $('outputDir').value = r.config.default_output_dir || '';
+          state.outputDir = r.config.default_output_dir || '';
+        }
+      } catch {
+        const c = JSON.parse(localStorage.getItem('cfg') || '{}');
+        $('tavilyKey').value = c.tavilyKey || '';
+        $('minimaxKey').value = c.minimaxKey || '';
+        $('pexelsKey').value = c.pexelsKey || '';
+        $('outputDir').value = c.outputDir || '';
+      }
+    }
+
+    async function saveConfig() {
+      const cfg = {
+        tavily_api_key: $('tavilyKey').value,
+        minimax_api_key: $('minimaxKey').value,
+        pexels_api_key: $('pexelsKey').value,
+        default_output_dir: $('outputDir').value
+      };
+      try {
+        const r = await api.saveConfig(cfg);
+        if (r.success) {
+          localStorage.setItem('cfg', JSON.stringify({
+            tavilyKey: cfg.tavily_api_key,
+            minimaxKey: cfg.minimax_api_key,
+            pexelsKey: cfg.pexels_api_key,
+            outputDir: cfg.default_output_dir
+          }));
+          state.outputDir = cfg.default_output_dir;
+          $('settingsModal').classList.remove('active');
+          toast('配置已保存');
+        }
+      } catch (e) { toast('保存失败: ' + e.message, 'error'); }
+    }
+
+    // Page switching
+    function showPage(pageId) {
+      document.querySelectorAll('.page-view').forEach(el => el.style.display = 'none');
+      const page = document.getElementById('view-' + pageId);
+      if (page) page.style.display = 'block';
+
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const navItem = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+      if (navItem) navItem.classList.add('active');
+
+      if (pageId === 'news') loadNewsLibrary();
+      if (pageId === 'articles') loadArticlesLibrary();
+      if (pageId === 'videos') loadVideosLibrary();
+      if (pageId === 'logs') renderLogs();
+    }
+
+    // Events
+    $('clearLogsBtn').addEventListener('click', clearLogs);
+    document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+      el.addEventListener('click', () => {
+        const page = el.dataset.page;
+        showPage(page);
+      });
+    });
+
+    $('startBtn').addEventListener('click', async () => {
+      const topic = $('topicInput').value.trim();
+      if (!topic) { toast('请输入创作主题', 'error'); return; }
+      $('startBtn').disabled = true;
+      $('startBtn').textContent = '创作中...';
+      logger.info('开始创作流程');
+      for (let i = 1; i <= 6; i++) {
+        const ok = await runStep(i);
+        if (!ok) {
+          logger.error('流程中断于步骤 ' + i);
+          break;
+        }
+        await new Promise(r => setTimeout(r, 300));
+      }
+      $('startBtn').disabled = false;
+      $('startBtn').textContent = '开始创作';
+      const completed = Object.values(STEPS).filter(s => s === 'success').length;
+      if (completed === 6) {
+        logger.success('创作流程全部完成');
+        toast('创作完成！');
+      }
+    });
+
+    document.querySelectorAll('.step').forEach(el => {
+      el.addEventListener('click', () => {
+        const step = parseInt(el.dataset.step);
+        if (STEPS[step] === 'success') {
+          document.querySelectorAll('.step').forEach(e => e.classList.remove('active'));
+          el.classList.add('active');
+        }
+      });
+    });
+
+    $('openSettings').addEventListener('click', () => { loadConfig(); $('settingsModal').classList.add('active'); });
+    $('closeSettings').addEventListener('click', () => $('settingsModal').classList.remove('active'));
+    $('cancelSettings').addEventListener('click', () => $('settingsModal').classList.remove('active'));
+    $('saveSettings').addEventListener('click', saveConfig);
+    $('settingsModal').addEventListener('click', e => { if (e.target === $('settingsModal')) $('settingsModal').classList.remove('active'); });
+    $('selectDirBtn').addEventListener('click', async () => {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        $('outputDir').value = dirHandle.name;
+        state.outputDirHandle = dirHandle;
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          console.log('Directory picker not supported or cancelled');
+        }
+      }
+    });
+
+    $('topicInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { $('startBtn').click(); }
+    });
+
+    logger.info('创作方舟已启动');
+    loadConfig();
+  </script>
+</body>
+</html>

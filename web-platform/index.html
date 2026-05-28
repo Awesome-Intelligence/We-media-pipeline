@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>创作方舟</title>
+  <title>We 自媒体创作</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -652,6 +652,109 @@
       gap: 8px;
     }
 
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .modal-content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+    }
+
+    .video-modal-content {
+      width: 900px;
+      max-width: 95vw;
+      max-height: 90vh;
+      background: var(--bg);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .video-modal-content .modal-body {
+      flex: 1;
+      overflow: hidden;
+      max-height: calc(90vh - 140px);
+    }
+
+    .video-modal-body {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .video-section {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      border-radius: 6px;
+      overflow: hidden;
+      min-height: 250px;
+    }
+
+    .video-section video {
+      width: 100%;
+      height: auto;
+      max-height: 400px;
+      object-fit: contain;
+    }
+
+    .content-section {
+      width: 320px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .content-json-editor {
+      margin-top: 0;
+    }
+
+    .content-json-editor h4 {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .btn-warning {
+      background: var(--accent, #f59e0b);
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background: #d97706;
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Settings modal - use overlay style */
+    #settingsModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #settingsModal.active { display: flex; }
+
     /* Toast */
     .toast {
       position: fixed;
@@ -796,6 +899,247 @@
       color: var(--text-tertiary);
     }
 
+    /* View toggle - Notion style */
+    .view-toggle {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 16px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      padding: 3px;
+      width: fit-content;
+    }
+
+    .toggle-btn {
+      padding: 5px 10px;
+      border: none;
+      background: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-btn:hover {
+      background: var(--bg-hover);
+    }
+
+    .toggle-btn.active {
+      background: var(--bg);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Project cards */
+    .projects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .projects-grid.list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .projects-grid.grid-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .project-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .projects-grid.list-view .project-card:hover {
+      background: var(--bg-secondary);
+    }
+
+    .projects-grid.grid-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+    }
+
+    .projects-grid.grid-view .project-card {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      background: var(--bg);
+      border-radius: 4px;
+      border: 1px solid transparent;
+      overflow: hidden;
+      transition: all 0.15s;
+    }
+
+    .projects-grid.grid-view .project-card:hover {
+      border-color: var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .project-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .projects-grid.grid-view .project-icon {
+      display: none;
+    }
+
+    .projects-grid.grid-view .project-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: var(--bg-secondary);
+      display: block;
+    }
+
+    .projects-grid.grid-view .project-info {
+      padding: 8px 10px;
+    }
+
+    .projects-grid.grid-view .project-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .projects-grid.grid-view .project-files {
+      justify-content: flex-start;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .projects-grid.grid-view .file-tag {
+      font-size: 10px;
+      padding: 1px 4px;
+    }
+
+    .project-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .project-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .project-files {
+      display: flex;
+      gap: 6px;
+    }
+
+    .file-tag {
+      font-size: 11px;
+      padding: 2px 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      color: var(--text-secondary);
+    }
+
+    .projects-grid.grid-view .file-tag {
+      background: var(--bg-secondary);
+    }
+
+    .project-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .breadcrumb-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .btn-sm {
+      padding: 4px 12px;
+      font-size: 12px;
+    }
+
+    .file-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .file-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .file-row:hover {
+      background: var(--bg-hover);
+    }
+
+    .tab-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+    }
+
+    .video-tab {
+      align-items: center;
+    }
+
+    .project-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .project-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 6px;
+    }
+
+    .project-files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .file-tag {
+      font-size: 11px;
+      padding: 2px 6px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      color: var(--text-secondary);
+    }
+
     /* Log viewer */
     .log-toolbar {
       display: flex;
@@ -912,34 +1256,22 @@
       <div class="sidebar-top">
         <button class="workspace-btn">
           <div class="workspace-icon">创</div>
-          <span>创作方舟</span>
+          <span>We 自媒体创作</span>
         </button>
       </div>
 
       <nav class="sidebar-nav">
         <div class="nav-section-label">工作区</div>
-        
+
         <div class="nav-item active" data-page="workspace">
           <div class="nav-icon">🏠</div>
           <span>工作台</span>
           <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
         </div>
 
-        <div class="nav-item" data-page="news">
-          <div class="nav-icon">📰</div>
-          <span>新闻库</span>
-          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
-        </div>
-
-        <div class="nav-item" data-page="articles">
-          <div class="nav-icon">📝</div>
-          <span>文章库</span>
-          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
-        </div>
-
-        <div class="nav-item" data-page="videos">
-          <div class="nav-icon">🎬</div>
-          <span>视频库</span>
+        <div class="nav-item" data-page="projects">
+          <div class="nav-icon">📁</div>
+          <span>项目</span>
           <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
         </div>
 
@@ -1151,32 +1483,25 @@
           </div>
         </div>
 
-        <!-- 文章库页面 -->
-        <div class="page-view" id="view-articles" style="display: none;">
+        <!-- 项目页面 -->
+        <div class="page-view" id="view-projects" style="display: none;">
           <div class="page-header">
-            <div class="page-emoji">📝</div>
-            <h1 class="page-title">文章库</h1>
-            <p class="page-subtitle">已生成的文章列表</p>
+            <div class="page-emoji">📁</div>
+            <h1 class="page-title">项目</h1>
+            <p class="page-subtitle">所有已输出的创作项目</p>
           </div>
           <div class="divider"></div>
-          <div class="section">
-            <div id="articlesLibraryContainer">
-              <div class="empty">暂无文章记录</div>
+          <div id="projectDetail">
+            <div class="view-toggle">
+              <button class="toggle-btn active" id="listViewBtn" onclick="setProjectView('list')" title="列表视图">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+              </button>
+              <button class="toggle-btn" id="gridViewBtn" onclick="setProjectView('grid')" title="画廊视图">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+              </button>
             </div>
-          </div>
-        </div>
-
-        <!-- 视频库页面 -->
-        <div class="page-view" id="view-videos" style="display: none;">
-          <div class="page-header">
-            <div class="page-emoji">🎬</div>
-            <h1 class="page-title">视频库</h1>
-            <p class="page-subtitle">已生成的视频列表</p>
-          </div>
-          <div class="divider"></div>
-          <div class="section">
-            <div id="videosLibraryContainer">
-              <div class="empty">暂无视频记录</div>
+            <div id="projectsGrid">
+              <div class="empty">暂无项目（请先运行创作流程）</div>
             </div>
           </div>
         </div>
@@ -1224,12 +1549,7 @@
         <div class="form-group">
           <label class="form-label">MiniMax API Key（文章生成）</label>
           <input type="password" class="form-input" id="minimaxKey" placeholder="sk-cp-xxxxxxxx">
-          <p class="form-hint">用于调用大模型生成文章</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Pexels API Key（配图搜索）</label>
-          <input type="password" class="form-input" id="pexelsKey" placeholder="xxxxxxxx">
-          <p class="form-hint">免费额度 200 请求/小时 · pexels.com/api</p>
+          <p class="form-hint">用于调用大模型生成文章和视频内容</p>
         </div>
         <div class="form-group">
           <label class="form-label">输出目录</label>
@@ -1237,7 +1557,19 @@
             <input type="text" class="form-input" id="outputDir" placeholder="点击按钮选择输出文件夹">
             <button class="btn btn-secondary" id="selectDirBtn">选择文件夹</button>
           </div>
-          <p class="form-hint">生成文件将保存在此目录（需后端支持目录写入）</p>
+          <p class="form-hint">生成文件将保存在此目录</p>
+        </div>
+        <div class="divider" style="margin: 20px 0;"></div>
+        <h4 style="margin-bottom: 12px; color: var(--text);">文章信息</h4>
+        <div class="form-group">
+          <label class="form-label">内容编辑</label>
+          <input type="text" class="form-input" id="articleEditor" placeholder="虾朋马友">
+          <p class="form-hint">文章编辑署名</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">内容审核</label>
+          <input type="text" class="form-input" id="articleReviewer" placeholder="休蒙">
+          <p class="form-hint">文章审核署名</p>
         </div>
       </div>
       <div class="modal-footer">
@@ -1250,8 +1582,50 @@
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
+  <!-- Video Detail Modal -->
+  <div class="modal" id="videoModal" style="display:none;">
+    <div class="modal-backdrop" onclick="closeVideoModal()"></div>
+    <div class="modal-content video-modal-content">
+      <div class="modal-header">
+        <h3 id="videoModalTitle">视频详情</h3>
+        <button class="modal-close" onclick="closeVideoModal()">&times;</button>
+      </div>
+      <div class="modal-body video-modal-body">
+        <div class="video-section">
+          <video id="videoPlayer" controls style="width:100%;background:#000;"></video>
+        </div>
+        <div class="content-section">
+          <div class="content-json-editor">
+            <h4>📋 内容配置</h4>
+            <div class="form-group">
+              <label class="form-label">大标题 (main_title)</label>
+              <input type="text" class="form-input" id="contentMainTitle" placeholder="≤10字，含数字优先">
+            </div>
+            <div class="form-group">
+              <label class="form-label">副标题 (sub_title)</label>
+              <input type="text" class="form-input" id="contentSubTitle" placeholder="≤12字，含悬念或背景">
+            </div>
+            <div class="form-group">
+              <label class="form-label">文本段落 (text_sections)</label>
+              <textarea class="form-input" id="contentTextSections" rows="4" placeholder="三段共约150字"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">结尾文字 (outro_text)</label>
+              <input type="text" class="form-input" id="contentOutro" placeholder="关注 AI不够酷｜获取更多AI资讯">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeVideoModal()">取消</button>
+        <button class="btn btn-primary" id="saveContentBtn">保存内容</button>
+        <button class="btn btn-warning" id="regenVideoBtn">重新生成视频</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const API_BASE = 'http://localhost:8083/api';
+    const API_BASE = 'http://localhost:8080/api';
 
     const STEPS = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '' };
 
@@ -1259,9 +1633,12 @@
       topic: '',
       news: [],
       article: '',
+      articleFile: '',
       images: [],
+      imagesDir: '',
       files: [],
-      outputDir: ''
+      outputDir: '',
+      projectView: 'list'
     };
 
     const $ = id => document.getElementById(id);
@@ -1281,6 +1658,13 @@
       h[type].unshift(item);
       if (h[type].length > 50) h[type] = h[type].slice(0, 50);
       saveHistory(h);
+    }
+
+    function openFile(filePath) {
+      if (!filePath) return;
+      api.openFile(filePath).then(r => {
+        if (!r.success) toast('打开失败: ' + r.error, 'error');
+      }).catch(e => toast('打开失败', 'error'));
     }
 
     function formatDate(dateStr) {
@@ -1340,10 +1724,33 @@
       }
       async getConfig() { return this.req('/config'); }
       async saveConfig(cfg) { return this.req('/config', { method: 'POST', body: cfg }); }
-      async searchNews(q, days, n = 10) { return this.req('/news/search', { method: 'POST', body: { query: q, days, num: n } }); }
-      async searchImages(q, n = 6) { return this.req('/images/search', { method: 'POST', body: { query: q, num: n } }); }
-      async exportWord(md, title) { return this.req('/word/export', { method: 'POST', body: { markdown: md, title } }); }
-      async generateVideo(cfg, imgs) { return this.req('/video/generate', { method: 'POST', body: { content_json: cfg, images: imgs } }); }
+      async searchNews(q, topic, days, n = 10, outputDir = '') {
+        return this.req('/news/search', { method: 'POST', body: { query: q, topic, days, num: n, output_dir: outputDir } });
+      }
+      async generateArticle(researchFile, outputDir) {
+        return this.req('/article/generate', { method: 'POST', body: { research_file: researchFile, output_dir: outputDir } });
+      }
+      async searchImages(q, n = 6, outputDir = '') {
+        return this.req('/images/search', { method: 'POST', body: { query: q, num: n, output_dir: outputDir } });
+      }
+      async exportWord(articleFile, outputDir, imagesDir = '') {
+        return this.req('/word/export', { method: 'POST', body: { article_file: articleFile, output_dir: outputDir, images_dir: imagesDir } });
+      }
+      async generateContent(articleFile, outputDir) {
+        return this.req('/content/generate', { method: 'POST', body: { article_file: articleFile, output_dir: outputDir } });
+      }
+      async generateVideo(contentJsonFile, imagesDir, outputDir) {
+        return this.req('/video/generate', { method: 'POST', body: { content_json_file: contentJsonFile, images_dir: imagesDir, output_dir: outputDir } });
+      }
+      async scanLibrary(outputDir = '') {
+        return this.req('/library/scan', { method: 'POST', body: { output_dir: outputDir } });
+      }
+      async openFile(path) {
+        return this.req('/file/open', { method: 'POST', body: { path } });
+      }
+      async readFile(path) {
+        return this.req('/file/read', { method: 'POST', body: { path } });
+      }
     }
 
     const api = new ApiClient(API_BASE);
@@ -1378,18 +1785,22 @@
       toast('正在搜索新闻...');
       logger.info(`搜索新闻: ${topic}, 时间范围: 最近${days}天`);
       try {
-        const r = await api.searchNews(topic, days, 10);
+        const r = await api.searchNews(topic, topic, days, 10);
         state.news = r.results?.results || [];
+        state.outputDir = r.output_dir || '';
+        state.researchFile = r.research_file || '';
         if (state.news.length === 0) {
           logger.warn('未找到相关新闻');
           renderError('newsContainer', '未找到相关新闻，请尝试其他关键词或扩大搜索时间范围');
           throw new Error('未找到相关新闻');
         } else {
           logger.success(`找到 ${state.news.length} 条新闻`);
+          logger.info(`输出目录: ${state.outputDir}`);
           addToHistory('news', {
             topic,
             date: new Date().toISOString(),
-            results: state.news.slice(0, 5)
+            results: state.news.slice(0, 5),
+            outputDir: state.outputDir
           });
         }
         renderNews();
@@ -1418,31 +1829,31 @@
       if (!state.news.length) {
         throw new Error('新闻搜索未成功，无法生成文章');
       }
+      if (!state.researchFile) {
+        throw new Error('研究资料文件不存在');
+      }
       toast('正在生成文章...');
-      logger.info('开始生成文章...');
-      state.article = generateMockArticle();
-      logger.success('文章生成完成');
-      addToHistory('articles', {
-        topic: state.topic,
-        date: new Date().toISOString(),
-        content: state.article.substring(0, 200)
-      });
-      renderArticle();
-    }
-
-    function generateMockArticle() {
-      return `<h1>${state.topic}：行业洞察与发展趋势</h1>
-<p>在当今快速变化的商业环境中，${state.topic}已成为最受关注的焦点之一。本文将深入分析其最新动态、市场影响以及未来发展趋势。</p>
-<h2>一、行业现状</h2>
-<p>近期多项数据显示，${state.topic}领域正在经历前所未有的变革。从技术创新到市场应用，从政策支持到资本涌入，各方力量共同推动着这一领域的高速发展。</p>
-<span class="img-placeholder">[[IMG: 行业数据图表]]</span>
-<h2>二、核心驱动力</h2>
-<p>专家指出，推动${state.topic}发展的主要有三大核心驱动力：技术创新、资本支持和政策红利。这些因素相互交织，形成了强大的发展合力。</p>
-<h2>三、发展前景</h2>
-<p>展望未来，${state.topic}有望继续保持高速增长态势。随着技术不断成熟和应用场景持续拓展，我们将迎来更加广阔的发展空间。</p>
-<span class="img-placeholder">[[IMG: 未来发展蓝图]]</span>
-<h2>四、总结</h2>
-<p>综上所述，${state.topic}正处于历史性的发展机遇期。对于从业者和投资者而言，把握当下时机、积极布局将是制胜的关键。</p>`;
+      logger.info('开始生成文章（调用 article-writer 技能）...');
+      try {
+        const r = await api.generateArticle(state.researchFile, state.outputDir);
+        state.article = r.article || '';
+        state.articleFile = r.file || '';
+        if (!state.article) {
+          throw new Error('文章生成失败，返回内容为空');
+        }
+        logger.success(`文章生成完成，长度: ${state.article.length} 字符`);
+        addToHistory('articles', {
+          topic: state.topic,
+          date: new Date().toISOString(),
+          content: state.article.substring(0, 200),
+          filePath: state.articleFile
+        });
+        renderArticle();
+      } catch (e) {
+        logger.error('文章生成失败: ' + e.message);
+        renderError('articleContainer', e.message);
+        throw e;
+      }
     }
 
     function renderArticle() {
@@ -1451,12 +1862,18 @@
 
     async function stepImages() {
       if (!state.article) throw new Error('请先生成文章');
+      if (!state.outputDir) throw new Error('输出目录不存在');
       toast('正在搜索配图...');
+      logger.info('开始搜索配图（调用 image-searcher 技能）...');
       try {
-        const r = await api.searchImages(state.topic, 6);
+        const r = await api.searchImages(state.topic, 6, state.outputDir);
         state.images = r.images || [];
+        state.imagesDir = r.images_dir || '';
+        logger.success(`找到 ${state.images.length} 张配图`);
+        logger.info(`配图目录: ${state.imagesDir}`);
       } catch (e) {
         state.images = [];
+        logger.error('配图搜索失败: ' + e.message);
         renderError('imageContainer', '配图搜索失败: ' + e.message);
         throw e;
       }
@@ -1477,13 +1894,18 @@
 
     async function stepWord() {
       if (!state.article) throw new Error('请先生成文章');
+      if (!state.articleFile) throw new Error('文章文件不存在');
+      if (!state.outputDir) throw new Error('输出目录不存在');
       toast('正在导出 Word...');
+      logger.info('开始导出 Word（调用 article-formatter 技能）...');
       try {
-        const r = await api.exportWord(state.article, state.topic);
-        state.files.push({ name: 'article.docx', path: r.path || '' });
+        const r = await api.exportWord(state.articleFile, state.outputDir, state.imagesDir);
+        state.files.push({ name: '04_article.docx', path: r.path || '' });
+        logger.success(`Word 文档已导出: ${r.path}`);
       } catch (e) {
-        state.files.push({ name: 'article.docx', path: '导出失败' });
+        state.files.push({ name: '04_article.docx', path: '导出失败' });
         renderFiles();
+        logger.error('Word导出失败: ' + e.message);
         throw new Error('Word导出失败: ' + e.message);
       }
       renderFiles();
@@ -1491,75 +1913,123 @@
 
     async function stepShorten() {
       if (!state.article) throw new Error('请先生成文章');
+      if (!state.articleFile) throw new Error('文章文件不存在');
+      if (!state.outputDir) throw new Error('输出目录不存在');
       toast('正在提炼视频内容...');
-      state.files.push({ name: 'content.json', path: '' });
+      logger.info('开始提炼内容（调用 article-shorter 技能）...');
+      try {
+        const r = await api.generateContent(state.articleFile, state.outputDir);
+        state.files.push({ name: '05_content.json', path: r.file || '' });
+        logger.success(`content.json 已生成: ${r.file}`);
+      } catch (e) {
+        state.files.push({ name: '05_content.json', path: '生成失败' });
+        renderFiles();
+        logger.error('内容提炼失败: ' + e.message);
+        throw new Error('内容提炼失败: ' + e.message);
+      }
       renderFiles();
     }
 
     async function stepVideo() {
+      if (!state.outputDir) throw new Error('输出目录不存在');
+      const sep = state.outputDir.includes('/') ? '/' : '\\';
+      const contentJsonFile = state.outputDir + sep + '05_content.json';
       toast('正在生成视频...');
-      logger.info('开始生成视频...');
-      addToHistory('videos', {
-        topic: state.topic,
-        date: new Date().toISOString(),
-        thumbnail: state.images[0]?.url || ''
-      });
-      logger.success('视频生成完成');
-      state.files.push({ name: 'article.mp4', path: '' });
+      logger.info('开始生成视频（调用 wechat-video-generator 技能）...');
+      try {
+        const r = await api.generateVideo(contentJsonFile, state.imagesDir, state.outputDir);
+        state.files.push({ name: '06_video.mp4', path: r.path || '' });
+        logger.success(`视频已生成: ${r.path}`);
+        addToHistory('videos', {
+          topic: state.topic,
+          date: new Date().toISOString(),
+          thumbnail: state.images[0]?.url || '',
+          filePath: r.path || ''
+        });
+      } catch (e) {
+        logger.error('视频生成失败: ' + e.message);
+        state.files.push({ name: '06_video.mp4', path: '生成失败' });
+        throw e;
+      }
       $('videoContainer').innerHTML = '<div class="video-block"><svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></div>';
       renderFiles();
     }
 
     // 加载库页面数据
     function loadNewsLibrary() {
-      const h = getHistory();
-      if (!h.news.length) {
-        $('newsLibraryContainer').innerHTML = '<div class="empty">暂无新闻记录</div>';
+      const projects = window.libraryData || [];
+      if (!projects.length) {
+        $('newsLibraryContainer').innerHTML = '<div class="empty">暂无新闻记录（请先运行创作流程）</div>';
         return;
       }
-      $('newsLibraryContainer').innerHTML = h.news.map(item => `
-        <div class="history-item">
+      $('newsLibraryContainer').innerHTML = projects.map(p => {
+        const articleFile = p.files.find(f => f.type === 'article' && f.name.startsWith('02_'));
+        const contentFile = p.files.find(f => f.type === 'content');
+        return `
+        <div class="history-item" onclick="openFile('${p.path}')" style="cursor:pointer;">
           <div class="history-header">
-            <span class="history-topic">${item.topic}</span>
-            <span class="history-date">${formatDate(item.date)}</span>
+            <span class="history-topic">${p.name}</span>
+            <span class="history-date">${formatDate(new Date().toISOString())}</span>
           </div>
           <div class="history-preview">
-            ${item.results.slice(0, 3).map(n => `<div class="history-news-item">• ${n.title}</div>`).join('')}
+            ${articleFile ? `<div class="history-news-item">📄 文章: ${articleFile.name}</div>` : ''}
+            ${contentFile ? `<div class="history-news-item">📋 内容: ${contentFile.name}</div>` : ''}
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     function loadArticlesLibrary() {
-      const h = getHistory();
-      if (!h.articles.length) {
-        $('articlesLibraryContainer').innerHTML = '<div class="empty">暂无文章记录</div>';
+      const projects = window.libraryData || [];
+      const articles = [];
+      projects.forEach(p => {
+        const wordFile = p.files.find(f => f.type === 'word');
+        if (wordFile) {
+          articles.push({ name: p.name, path: p.path, file: wordFile });
+        }
+      });
+      if (!articles.length) {
+        $('articlesLibraryContainer').innerHTML = '<div class="empty">暂无文章（请先运行创作流程）</div>';
         return;
       }
-      $('articlesLibraryContainer').innerHTML = h.articles.map(item => `
-        <div class="history-item">
+      $('articlesLibraryContainer').innerHTML = articles.map(item => `
+        <div class="history-item" onclick="openFile('${item.file.path}')" style="cursor:pointer;">
           <div class="history-header">
-            <span class="history-topic">${item.topic}</span>
-            <span class="history-date">${formatDate(item.date)}</span>
+            <span class="history-topic">${item.name}</span>
+            <span class="history-date">📄 Word</span>
           </div>
-          <div class="history-preview">${item.content}...</div>
+          <div class="history-preview">${item.file.name}</div>
         </div>
       `).join('');
     }
 
     function loadVideosLibrary() {
-      const h = getHistory();
-      if (!h.videos.length) {
-        $('videosLibraryContainer').innerHTML = '<div class="empty">暂无视频记录</div>';
+      const projects = window.libraryData || [];
+      const videos = [];
+      projects.forEach(p => {
+        const videoFile = p.files.find(f => f.type === 'video');
+        const imageFiles = p.files.filter(f => f.type === 'image');
+        if (videoFile) {
+          videos.push({
+            name: p.name,
+            path: p.path,
+            video: videoFile,
+            contentFile: p.files.find(f => f.type === 'content'),
+            thumbnail: imageFiles[0]?.path || ''
+          });
+        }
+      });
+      if (!videos.length) {
+        $('videosLibraryContainer').innerHTML = '<div class="empty">暂无视频（请先运行创作流程）</div>';
         return;
       }
       $('videosLibraryContainer').innerHTML = `<div class="video-grid">
-        ${h.videos.map(item => `
-          <div class="video-card">
-            ${item.thumbnail ? `<img src="${item.thumbnail}" alt="${item.topic}">` : '<div class="video-placeholder"></div>'}
+        ${videos.map((item, idx) => `
+          <div class="video-card" onclick="openVideoModal(${idx})" style="cursor:pointer;">
+            ${item.thumbnail ? `<img src="file:///${item.thumbnail.replace(/\\\\/g, '/')}" alt="${item.name}">` : '<div class="video-placeholder"></div>'}
             <div class="video-info">
-              <span class="video-title">${item.topic}</span>
-              <span class="video-date">${formatDate(item.date)}</span>
+              <span class="video-title">${item.name}</span>
+              <span class="video-date">🎬 ${item.video.name}</span>
             </div>
           </div>
         `).join('')}
@@ -1607,6 +2077,163 @@
       return div.innerHTML;
     }
 
+    let currentVideoData = null;
+
+    function openVideoModal(idx) {
+      const projects = window.libraryData || [];
+      console.log('openVideoModal called, idx:', idx, 'projects count:', projects.length);
+      const videos = [];
+      projects.forEach(p => {
+        console.log('Project:', p.name, 'files:', p.files.map(f => f.name + '(' + f.type + ')'));
+        const videoFile = p.files.find(f => f.type === 'video');
+        const contentFile = p.files.find(f => f.type === 'content');
+        const imageFiles = p.files.filter(f => f.type === 'image');
+        if (videoFile) {
+          videos.push({
+            name: p.name,
+            path: p.path,
+            video: videoFile,
+            contentFile: contentFile,
+            thumbnail: imageFiles[0]?.path || ''
+          });
+        }
+      });
+
+      console.log('videos array length:', videos.length);
+      if (!videos[idx]) {
+        console.log('No video at index:', idx);
+        return;
+      }
+      currentVideoData = videos[idx];
+      console.log('currentVideoData:', JSON.stringify({
+        name: currentVideoData.name,
+        videoPath: currentVideoData.video?.path,
+        contentFilePath: currentVideoData.contentFile?.path
+      }));
+
+      $('videoModalTitle').textContent = currentVideoData.name;
+      const videoPlayer = $('videoPlayer');
+      console.log('Video element:', videoPlayer);
+      console.log('Video path:', currentVideoData.video.path);
+      const videoSrc = API_BASE + '/file/stream/' + encodeURIComponent(currentVideoData.video.path).replace(/\\/g, '/');
+      console.log('Video src:', videoSrc);
+      videoPlayer.src = videoSrc;
+      videoPlayer.load();
+
+      if (currentVideoData.contentFile) {
+        const contentPath = currentVideoData.contentFile.path;
+        console.log('Content file path:', contentPath);
+        console.log('Calling api.readFile...');
+        api.readFile(contentPath).then(r => {
+          console.log('API response:', JSON.stringify(r));
+          if (r.success && r.data) {
+            console.log('Setting form values from r.data');
+            console.log('  main_title:', r.data.main_title);
+            console.log('  sub_title:', r.data.sub_title);
+            $('contentMainTitle').value = r.data.main_title || '';
+            $('contentSubTitle').value = r.data.sub_title || '';
+            $('contentTextSections').value = (r.data.text_sections || []).join('\n');
+            $('contentOutro').value = r.data.outro_text || '';
+          } else if (r.success && r.content) {
+            try {
+              const data = JSON.parse(r.content);
+              console.log('Parsed content from r.content');
+              $('contentMainTitle').value = data.main_title || '';
+              $('contentSubTitle').value = data.sub_title || '';
+              $('contentTextSections').value = (data.text_sections || []).join('\n');
+              $('contentOutro').value = data.outro_text || '';
+            } catch (e) {
+              console.error('JSON parse error:', e);
+            }
+          } else {
+            console.error('API call failed:', r.error);
+          }
+        }).catch(e => {
+          console.error('API error:', e);
+        });
+      } else {
+        console.log('No contentFile in currentVideoData');
+      }
+
+      $('videoModal').style.display = 'block';
+    }
+
+    function closeVideoModal() {
+      $('videoModal').style.display = 'none';
+      $('videoPlayer').src = '';
+      currentVideoData = null;
+    }
+
+    $('saveContentBtn').addEventListener('click', async () => {
+      if (!currentVideoData || !currentVideoData.contentFile) {
+        toast('没有找到 content.json 文件', 'error');
+        return;
+      }
+
+      const content = {
+        main_title: $('contentMainTitle').value,
+        sub_title: $('contentSubTitle').value,
+        text_sections: $('contentTextSections').value.split('\n').filter(s => s.trim()),
+        outro_text: $('contentOutro').value
+      };
+
+      try {
+        const formData = new FormData();
+        formData.append('content', JSON.stringify(content, null, 2));
+        formData.append('path', currentVideoData.contentFile.path);
+
+        const response = await fetch(API_BASE + '/file/save', {
+          method: 'POST',
+          body: JSON.stringify({
+            path: currentVideoData.contentFile.path,
+            content: JSON.stringify(content, null, 2)
+          }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const r = await response.json();
+        if (r.success) {
+          toast('内容已保存');
+        } else {
+          toast('保存失败: ' + r.error, 'error');
+        }
+      } catch (e) {
+        toast('保存失败', 'error');
+      }
+    });
+
+    $('regenVideoBtn').addEventListener('click', async () => {
+      if (!currentVideoData) return;
+
+      const contentJsonPath = currentVideoData.contentFile?.path;
+      const imagesDir = currentVideoData.path + '/images_good';
+      const outputDir = currentVideoData.path;
+
+      if (!contentJsonPath) {
+        toast('没有找到 content.json 文件', 'error');
+        return;
+      }
+
+      toast('正在重新生成视频...');
+      $('regenVideoBtn').disabled = true;
+      $('regenVideoBtn').textContent = '生成中...';
+
+      try {
+        const r = await api.generateVideo(contentJsonPath, imagesDir, outputDir);
+        if (r.success) {
+          toast('视频重新生成完成');
+          currentVideoData.video.path = r.path;
+          $('videoPlayer').src = 'file:///' + r.path.replace(/\\/g, '/');
+        } else {
+          toast('视频生成失败: ' + r.error, 'error');
+        }
+      } catch (e) {
+        toast('视频生成失败: ' + e.message, 'error');
+      } finally {
+        $('regenVideoBtn').disabled = false;
+        $('regenVideoBtn').textContent = '重新生成视频';
+      }
+    });
+
     function clearLogs() {
       logs = [];
       renderLogs();
@@ -1629,16 +2256,18 @@
         if (r.success && r.config) {
           $('tavilyKey').value = r.config.tavily_api_key || '';
           $('minimaxKey').value = r.config.minimax_api_key || '';
-          $('pexelsKey').value = r.config.pexels_api_key || '';
           $('outputDir').value = r.config.default_output_dir || '';
+          $('articleEditor').value = r.config.article_editor || '';
+          $('articleReviewer').value = r.config.article_reviewer || '';
           state.outputDir = r.config.default_output_dir || '';
         }
       } catch {
         const c = JSON.parse(localStorage.getItem('cfg') || '{}');
-        $('tavilyKey').value = c.tavilyKey || '';
-        $('minimaxKey').value = c.minimaxKey || '';
-        $('pexelsKey').value = c.pexelsKey || '';
-        $('outputDir').value = c.outputDir || '';
+        $('tavilyKey').value = c.tavily_api_key || c.tavilyKey || '';
+        $('minimaxKey').value = c.minimax_api_key || c.minimaxKey || '';
+        $('outputDir').value = c.default_output_dir || c.outputDir || '';
+        $('articleEditor').value = c.article_editor || '';
+        $('articleReviewer').value = c.article_reviewer || '';
       }
     }
 
@@ -1646,17 +2275,19 @@
       const cfg = {
         tavily_api_key: $('tavilyKey').value,
         minimax_api_key: $('minimaxKey').value,
-        pexels_api_key: $('pexelsKey').value,
-        default_output_dir: $('outputDir').value
+        default_output_dir: $('outputDir').value,
+        article_editor: $('articleEditor').value,
+        article_reviewer: $('articleReviewer').value
       };
       try {
         const r = await api.saveConfig(cfg);
         if (r.success) {
           localStorage.setItem('cfg', JSON.stringify({
-            tavilyKey: cfg.tavily_api_key,
-            minimaxKey: cfg.minimax_api_key,
-            pexelsKey: cfg.pexels_api_key,
-            outputDir: cfg.default_output_dir
+            tavily_api_key: cfg.tavily_api_key,
+            minimax_api_key: cfg.minimax_api_key,
+            default_output_dir: cfg.default_output_dir,
+            article_editor: cfg.article_editor,
+            article_reviewer: cfg.article_reviewer
           }));
           state.outputDir = cfg.default_output_dir;
           $('settingsModal').classList.remove('active');
@@ -1675,10 +2306,174 @@
       const navItem = document.querySelector(`.nav-item[data-page="${pageId}"]`);
       if (navItem) navItem.classList.add('active');
 
-      if (pageId === 'news') loadNewsLibrary();
-      if (pageId === 'articles') loadArticlesLibrary();
-      if (pageId === 'videos') loadVideosLibrary();
+      if (pageId === 'projects') { scanLibrary(); showProjectsList(); }
       if (pageId === 'logs') renderLogs();
+    }
+
+    let currentProject = null;
+
+    function showProjectDetail(project) {
+      currentProject = project;
+      const detail = $('projectDetail');
+      const files = project.files || [];
+      const researchFile = files.find(f => f.type === 'article' && f.name.startsWith('01_'));
+      const articleFile = files.find(f => f.type === 'article' && f.name.startsWith('02_'));
+      const wordFile = files.find(f => f.type === 'word');
+      const videoFile = files.find(f => f.type === 'video');
+      const contentFile = files.find(f => f.type === 'content');
+
+      detail.innerHTML = `
+        <div class="project-breadcrumb">
+          <button class="btn btn-secondary btn-sm" onclick="showProjectsList()">← 返回项目列表</button>
+          <span class="breadcrumb-title">${project.name}</span>
+        </div>
+        <div class="file-list">
+          ${researchFile ? `<div class="file-row" onclick="openFile('${researchFile.path}')"><span>📄 研究资料</span><span>${researchFile.name}</span></div>` : ''}
+          ${articleFile ? `<div class="file-row" onclick="openFile('${articleFile.path}')"><span>📝 文章</span><span>${articleFile.name}</span></div>` : ''}
+          ${wordFile ? `<div class="file-row" onclick="openFile('${wordFile.path}')"><span>📄 Word</span><span>${wordFile.name}</span></div>` : ''}
+          ${contentFile ? `<div class="file-row" onclick="openFile('${contentFile.path}')"><span>📋 内容</span><span>${contentFile.name}</span></div>` : ''}
+          ${videoFile && contentFile ? `<div class="file-row" onclick="openVideoModalFromProject('${videoFile.path}', '${contentFile.path}', '${currentProject.path.replace(/\\/g, '\\\\')}')"><span>🎬 视频</span><span>${videoFile.name}</span></div>` : ''}
+        </div>
+      `;
+    }
+
+    function showProjectsList() {
+      currentProject = null;
+      const detail = $('projectDetail');
+      const view = state.projectView || 'list';
+      detail.innerHTML = `
+        <div class="view-toggle">
+          <button class="toggle-btn ${view === 'list' ? 'active' : ''}" id="listViewBtn" onclick="setProjectView('list')" title="列表视图">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+          </button>
+          <button class="toggle-btn ${view === 'grid' ? 'active' : ''}" id="gridViewBtn" onclick="setProjectView('grid')" title="画廊视图">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+          </button>
+        </div>
+        <div id="projectsGrid">
+          ${(window.libraryData || []).length ? '' : '<div class="empty">暂无项目（请先运行创作流程）</div>'}
+        </div>
+      `;
+      loadProjects();
+    }
+
+    function openVideoModalFromProject(videoPath, contentPath, projectPath) {
+      const projects = window.libraryData || [];
+      const project = projects.find(p => p.path === projectPath);
+      if (!project) return;
+      const videoFile = project.files.find(f => f.type === 'video');
+      const imageFiles = project.files.filter(f => f.type === 'image');
+      currentVideoData = {
+        name: project.name,
+        path: project.path,
+        video: videoFile,
+        contentFile: contentPath,
+        thumbnail: imageFiles[0]?.path || ''
+      };
+      $('videoModalTitle').textContent = project.name;
+      const videoSrc = API_BASE + '/file/stream/' + encodeURIComponent(videoFile.path).replace(/\\/g, '/');
+      $('videoPlayer').src = videoSrc;
+      $('videoPlayer').load();
+      api.readFile(contentPath).then(r => {
+        if (r.success && r.data) {
+          $('contentMainTitle').value = r.data.main_title || '';
+          $('contentSubTitle').value = r.data.sub_title || '';
+          $('contentTextSections').value = (r.data.text_sections || []).join('\n');
+          $('contentOutro').value = r.data.outro_text || '';
+        }
+      });
+      $('videoModal').style.display = 'block';
+    }
+
+    function regenerateVideo(contentPath, imagesPath, projectPath) {
+      const projects = window.libraryData || [];
+      const project = projects.find(p => p.path === projectPath);
+      if (!project) return;
+      const imageFiles = project.files.filter(f => f.type === 'image');
+      const imagesDir = projectPath + '/images_good';
+
+      toast('正在重新生成视频...');
+      $('regenVideoBtn').disabled = true;
+      api.generateVideo(contentPath, imagesDir, projectPath).then(r => {
+        if (r.success) {
+          toast('视频重新生成完成');
+          showProjectTab('video');
+        } else {
+          toast('视频生成失败: ' + r.error, 'error');
+        }
+        $('regenVideoBtn').disabled = false;
+      }).catch(e => {
+        toast('视频生成失败: ' + e.message, 'error');
+        $('regenVideoBtn').disabled = false;
+      });
+    }
+
+    function loadProjects() {
+      const projects = window.libraryData || [];
+      const view = state.projectView || 'list';
+      const grid = $('projectsGrid');
+      grid.classList.remove('list-view', 'grid-view');
+      grid.classList.add(view + '-view');
+
+      if (!projects.length) {
+        grid.innerHTML = '<div class="empty">暂无项目（请先运行创作流程）</div>';
+        return;
+      }
+      grid.innerHTML = projects.map(p => {
+        const files = p.files || [];
+        const wordFile = files.find(f => f.type === 'word');
+        const videoFile = files.find(f => f.type === 'video');
+        const contentFile = files.find(f => f.type === 'content');
+        const imageFile = files.find(f => f.type === 'image');
+        if (view === 'grid') {
+          return `
+            <div class="project-card" onclick="showProjectDetail(window.libraryData.find(proj => proj.path === '${p.path.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'))">
+              ${imageFile ? `<img src="file:///${imageFile.path.replace(/\\\\/g, '/')}" alt="${p.name}" class="project-thumb">` : '<div class="project-icon">📁</div>'}
+              <div class="project-info">
+                <div class="project-name">${p.name}</div>
+                <div class="project-files">
+                  ${wordFile ? `<span class="file-tag">📄</span>` : ''}
+                  ${videoFile ? `<span class="file-tag">🎬</span>` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        return `
+          <div class="project-card" onclick="showProjectDetail(window.libraryData.find(proj => proj.path === '${p.path.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'))">
+            <div class="project-icon">📁</div>
+            <div class="project-info">
+              <div class="project-name">${p.name}</div>
+              <div class="project-files">
+                ${wordFile ? `<span class="file-tag">📄 ${wordFile.name}</span>` : ''}
+                ${videoFile ? `<span class="file-tag">🎬 ${videoFile.name}</span>` : ''}
+                ${contentFile ? `<span class="file-tag">📋 ${contentFile.name}</span>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function setProjectView(view) {
+      state.projectView = view;
+      const grid = $('projectsGrid');
+      grid.classList.remove('list-view', 'grid-view');
+      grid.classList.add(view + '-view');
+      $('listViewBtn').classList.toggle('active', view === 'list');
+      $('gridViewBtn').classList.toggle('active', view === 'grid');
+      loadProjects();
+    }
+
+    async function scanLibrary() {
+      try {
+        const r = await api.scanLibrary();
+        if (r.success) {
+          window.libraryData = r.projects || [];
+        }
+      } catch (e) {
+        console.error('扫描库失败:', e);
+      }
     }
 
     // Events
@@ -1728,6 +2523,10 @@
     $('cancelSettings').addEventListener('click', () => $('settingsModal').classList.remove('active'));
     $('saveSettings').addEventListener('click', saveConfig);
     $('settingsModal').addEventListener('click', e => { if (e.target === $('settingsModal')) $('settingsModal').classList.remove('active'); });
+
+    $('videoModal').addEventListener('wheel', e => e.stopPropagation(), { passive: false });
+    $('settingsModal').addEventListener('wheel', e => e.stopPropagation(), { passive: false });
+
     $('selectDirBtn').addEventListener('click', async () => {
       try {
         const dirHandle = await window.showDirectoryPicker();

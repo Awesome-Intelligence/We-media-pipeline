@@ -1,0 +1,41 @@
+# API Keys and Configs
+**/config.json
+**/*_key.json
+**/secrets.json
+**/.env
+
+# Test/Debug files with hardcoded keys
+web-platform/test_*.py
+web-platform/debug_*.py
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.venv
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Skills (optional - depends on your use case)
+# skills/
+
+# Output directories
+output/
+baidu_images/
+*.mp4
+*.docx
+自媒体输出/

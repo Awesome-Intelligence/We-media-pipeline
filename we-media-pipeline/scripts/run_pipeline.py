@@ -930,8 +930,6 @@ def extract_title_from_article(article_path):
 
                     title = line[2:].strip()
 
-                    import re
-
                     clean_title = re.sub(r'[^\w\s\u4e00-\u9fff]', '', title)
 
                     clean_title = re.sub(r'\s+', '', clean_title)

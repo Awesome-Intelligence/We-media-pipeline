@@ -18,6 +18,9 @@ SKILL_DIRS = {
     'wechat-video-generator': BASE_DIR / 'we-video-generator' / 'scripts',
 }
 
+sys.path.insert(0, str(BASE_DIR / 'web-platform'))
+from llm_client import LLMClient, get_available_models
+
 def get_default_output_dir():
     config = load_config()
     output_dir = config.get('default_output_dir', '').strip()
@@ -113,12 +116,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
         if parsed.path == '/api/status':
             config = load_config()
+            available_models = get_available_models(config)
             self.send_json({
                 'success': True,
                 'tavily_configured': bool(config.get('tavily_api_key', '').strip()),
                 'minimax_configured': bool(config.get('minimax_api_key', '').strip()),
+                'deepseek_configured': bool(config.get('deepseek_api_key', '').strip()),
+                'openai_configured': bool(config.get('openai_api_key', '').strip()),
                 'pexels_configured': bool(config.get('pexels_api_key', '').strip()),
                 'output_dir': config.get('default_output_dir', ''),
+                'available_models': available_models,
             })
 
         elif parsed.path == '/api/config':
@@ -152,7 +159,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     with open(config_path, 'r', encoding='utf-8') as f:
                         config = json.load(f)
 
-                for key in ['tavily_api_key', 'minimax_api_key', 'pexels_api_key', 'default_output_dir', 'article_editor', 'article_reviewer']:
+                for key in ['tavily_api_key', 'minimax_api_key', 'minimax_model', 'deepseek_api_key', 'deepseek_base_url', 'deepseek_model', 'openai_api_key', 'openai_base_url', 'openai_model', 'custom_api_key', 'custom_base_url', 'custom_model', 'default_model_provider', 'pexels_api_key', 'default_output_dir', 'article_editor', 'article_reviewer', 'style_dir', 'article_fetch_dir']:
                     if key in data:
                         config[key] = data[key]
 
@@ -246,23 +253,46 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 data = json.loads(body) if body else {}
                 research_file = data.get('research_file', '')
                 output_dir = data.get('output_dir', '')
+                model_provider = data.get('model_provider', 'minimax')
+                model_name = data.get('model_name', None)
+                base_url = data.get('base_url', None)
 
                 if not research_file or not os.path.exists(research_file):
                     self.send_json({'success': False, 'error': '研究资料文件不存在'}, 400)
                     return
 
                 config = load_config()
-                minimax_key = config.get('minimax_api_key', '').strip()
-                if not minimax_key:
-                    self.send_json({'success': False, 'error': 'MiniMax API Key 未配置'}, 400)
+                
+                api_key = config.get(f'{model_provider}_api_key', '').strip()
+                if not api_key:
+                    provider_info = LLMClient.SUPPORTED_MODELS.get(model_provider)
+                    provider_name = provider_info['name'] if provider_info else model_provider
+                    self.send_json({'success': False, 'error': f'{provider_name} API Key 未配置'}, 400)
                     return
+
+                # Get model name from request or config
+                if not model_name:
+                    model_name = config.get(f'{model_provider}_model', '').strip()
+                
+                # Get base_url from request or config
+                if not base_url:
+                    base_url = config.get(f'{model_provider}_base_url', '').strip()
+                    if not base_url and model_provider != 'openai':
+                        provider_info = LLMClient.SUPPORTED_MODELS.get(model_provider)
+                        if provider_info:
+                            base_url = provider_info.get('default_base_url', '')
 
                 with open(research_file, 'r', encoding='utf-8') as f:
                     research_content = f.read()
 
-                style_guide_path = BASE_DIR / 'article-writer' / 'references' / 'style-guide.md'
+                style_dir = config.get('style_dir', '').strip()
+                if style_dir and os.path.exists(style_dir):
+                    style_guide_path = Path(style_dir) / 'style-guide.md'
+                else:
+                    style_guide_path = BASE_DIR / 'reference' / 'style-guide.md'
+
                 if not style_guide_path.exists():
-                    self.send_json({'success': False, 'error': 'article-writer style-guide.md 未找到'}, 404)
+                    self.send_json({'success': False, 'error': f'style-guide.md 未找到: {style_guide_path}'}, 404)
                     return
 
                 with open(style_guide_path, 'r', encoding='utf-8') as f:
@@ -291,28 +321,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 )
 
                 try:
-                    import anthropic
-                except ImportError:
-                    subprocess.run([sys.executable, '-m', 'pip', 'install', 'anthropic', '-q'], check=True)
-                    import anthropic
-
-                client = anthropic.Anthropic(
-                    base_url="https://api.minimaxi.com/anthropic",
-                    api_key=minimax_key,
-                )
-
-                message = client.messages.create(
-                    model="MiniMax-M2.7",
-                    max_tokens=8192,
-                    system=system_prompt,
-                    messages=[{"role": "user", "content": [{"type": "text", "text": "根据以上研究资料和风格规范，生成一篇微信公众号文章。"}]}],
-                )
-
-                article_text = ""
-                for block in message.content:
-                    if block.type == "text":
-                        article_text = block.text
-                        break
+                    client = LLMClient(model_provider, api_key, model_name, base_url)
+                    article_text = client.generate(system_prompt, "根据以上研究资料和风格规范，生成一篇微信公众号文章。", max_tokens=8192)
+                except Exception as e:
+                    self.send_json({'success': False, 'error': f'LLM 调用失败: {str(e)}'}, 500)
+                    return
 
                 if not article_text:
                     self.send_json({'success': False, 'error': 'LLM 返回内容为空'}, 500)
@@ -328,6 +341,41 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
                 self.send_json({'success': True, 'article': article_text, 'file': article_file, 'output_dir': output_dir})
 
+            except Exception as e:
+                self.send_json({'success': False, 'error': str(e)}, 500)
+
+        elif parsed.path == '/api/model/test':
+            try:
+                data = json.loads(body) if body else {}
+                provider = data.get('provider', '').lower()
+                api_key = data.get('api_key', '').strip()
+                model = data.get('model', '').strip()
+                base_url = data.get('base_url', '').strip()
+                
+                if not provider:
+                    self.send_json({'success': False, 'error': '请指定模型提供商'}, 400)
+                    return
+                
+                if not api_key:
+                    self.send_json({'success': False, 'error': '请提供 API Key'}, 400)
+                    return
+                
+                try:
+                    client = LLMClient(provider, api_key, model, base_url)
+                    response = client.generate("你是一个测试助手。", "请回复 '测试成功'。", max_tokens=10)
+                    
+                    if response and '测试成功' in response:
+                        self.send_json({'success': True, 'message': '连接成功'})
+                    else:
+                        self.send_json({'success': True, 'message': '连接成功', 'response': response.strip()[:50]})
+                
+                except Exception as e:
+                    error_msg = str(e)
+                    if 'rate_limit' in error_msg.lower() or '429' in error_msg:
+                        self.send_json({'success': True, 'message': '连接成功（但 API 额度已用完）', 'warning': 'API 调用额度已用完，请稍后重试'})
+                    else:
+                        self.send_json({'success': False, 'error': f'连接失败: {error_msg}'})
+            
             except Exception as e:
                 self.send_json({'success': False, 'error': str(e)}, 500)
 
@@ -366,7 +414,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 )
 
                 if result.returncode == 0:
-                    from pathlib import Path
                     tmp_path = Path(images_all_dir)
                     images = []
                     good_count = 0
@@ -422,8 +469,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 with open(article_file, 'r', encoding='utf-8') as f:
                     content = f.read()
 
+                print(f"[DEBUG] Before re.search, content length: {len(content)}", file=sys.stderr)
                 title_match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
+                print(f"[DEBUG] After re.search, title_match: {title_match}", file=sys.stderr)
                 article_title = title_match.group(1) if title_match else 'article'
+                print(f"[DEBUG] article_title: {article_title}", file=sys.stderr)
                 safe_title = "".join(c if c.isalnum() or c in (' ', '-') else '_' for c in article_title).strip().replace(' ', '_')
                 docx_path = os.path.join(output_dir, f'04_{safe_title}.docx')
 
@@ -438,11 +488,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 if result.returncode == 0:
                     self.send_json({'success': True, 'path': docx_path, 'output_dir': output_dir})
                 else:
-                    self.send_json({'success': False, 'error': result.stderr[:500]})
+                    stderr_str = str(result.stderr) if result.stderr else 'None'
+                    print(f"[DEBUG] md_to_word failed: returncode={result.returncode}, stderr_type={type(result.stderr)}, stderr={stderr_str[:500]}", file=sys.stderr)
+                    error_msg = stderr_str[:500] if len(stderr_str) <= 500 else stderr_str[:500] + '...'
+                    self.send_json({'success': False, 'error': error_msg})
 
             except subprocess.TimeoutExpired:
                 self.send_json({'success': False, 'error': '转换超时'}, 504)
             except Exception as e:
+                import traceback
+                traceback.print_exc()
                 self.send_json({'success': False, 'error': str(e)}, 500)
 
         elif parsed.path == '/api/content/generate':
@@ -755,6 +810,78 @@ Rules:
                     cwd=str(pipeline_script.parent)
                 )
 
+            except Exception as e:
+                self.send_json({'success': False, 'error': str(e)}, 500)
+
+        elif parsed.path == '/api/article/fetch':
+            try:
+                data = json.loads(body) if body else {}
+                url = data.get('url', '')
+                output_dir = data.get('output_dir', '')
+
+                if not url:
+                    self.send_json({'success': False, 'error': '缺少文章链接'}, 400)
+                    return
+
+                if not url.startswith('http'):
+                    url = 'https://' + url
+
+                if not output_dir:
+                    output_dir = get_default_output_dir()
+
+                os.makedirs(output_dir, exist_ok=True)
+
+                fetch_script = BASE_DIR / 'article-fetcher' / 'scripts' / 'fetch_wechat_article.py'
+                if not fetch_script.exists():
+                    self.send_json({'success': False, 'error': '文章抓取脚本未找到'}, 404)
+                    return
+
+                result = subprocess.run(
+                    [sys.executable, str(fetch_script), url, '-o', output_dir],
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                    cwd=str(fetch_script.parent)
+                )
+
+                if result.returncode == 0:
+                    title_match = re.search(r'保存到[:：]\s*(.+)', result.stdout)
+                    path_match = re.search(r'文件已保存[:：]\s*(.+)', result.stdout)
+
+                    self.send_json({
+                        'success': True,
+                        'message': '文章抓取成功',
+                        'path': path_match.group(1) if path_match else output_dir,
+                        'title': title_match.group(1) if title_match else ''
+                    })
+                else:
+                    error_output = result.stderr or result.stdout
+                    self.send_json({'success': False, 'error': error_output[:500]})
+
+            except subprocess.TimeoutExpired:
+                self.send_json({'success': False, 'error': '抓取超时'}, 504)
+            except Exception as e:
+                self.send_json({'success': False, 'error': str(e)}, 500)
+
+        elif parsed.path == '/api/dialog/select-directory':
+            try:
+                import tkinter as tk
+                from tkinter import filedialog
+                
+                # Create hidden tkinter window
+                root = tk.Tk()
+                root.withdraw()
+                root.attributes('-topmost', True)
+                
+                # Open directory dialog
+                directory = filedialog.askdirectory(title='选择文件夹')
+                
+                root.destroy()
+                
+                if directory:
+                    self.send_json({'success': True, 'path': directory})
+                else:
+                    self.send_json({'success': False, 'error': '用户取消选择'})
             except Exception as e:
                 self.send_json({'success': False, 'error': str(e)}, 500)
 

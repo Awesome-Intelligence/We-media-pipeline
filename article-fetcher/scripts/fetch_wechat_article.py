@@ -177,17 +177,6 @@ def main():
                         help='Wait time in seconds')
     args = parser.parse_args()
 
-    # Path validation: must be under references/articles/
-    import pathlib
-    output_abs = pathlib.Path(args.output_dir).resolve()
-    skill_root = pathlib.Path(__file__).resolve().parent.parent
-    allowed_base = skill_root / 'references' / 'articles'
-    # Allow exact match or subdirectory of allowed_base
-    if not str(output_abs).startswith(str(allowed_base)) and str(output_abs) != str(allowed_base):
-        print(f"ERROR: output_dir must be under {allowed_base}", file=sys.stderr)
-        print(f"Got: {output_abs}", file=sys.stderr)
-        sys.exit(1)
-
     os.makedirs(args.output_dir, exist_ok=True)
 
     result = fetch_article(args.url, args.output_dir, args.wait, args.topic)

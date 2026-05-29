@@ -60,10 +60,10 @@
     .workspace-btn {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 5px 8px;
-      border-radius: var(--radius);
-      font-size: 13px;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
       font-weight: 500;
       color: var(--text);
       cursor: pointer;
@@ -76,29 +76,29 @@
     .workspace-btn:hover { background: var(--bg-hover); }
 
     .workspace-icon {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       background: var(--text);
-      border-radius: var(--radius);
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 11px;
+      color: var(--bg);
+      font-size: 12px;
       font-weight: 600;
     }
 
     .sidebar-nav {
       flex: 1;
-      padding: 2px 8px;
+      padding: 4px 8px;
       overflow-y: auto;
     }
 
     .nav-section-label {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 500;
       color: var(--text-tertiary);
-      padding: 10px 8px 2px;
+      padding: 16px 12px 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -106,10 +106,10 @@
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: var(--radius);
-      font-size: 13px;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
       color: var(--text-secondary);
       cursor: pointer;
       transition: background 0.1s ease;
@@ -121,12 +121,12 @@
     .nav-item.active .nav-icon { color: var(--text); }
 
     .nav-icon {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 16px;
       color: var(--text-tertiary);
       flex-shrink: 0;
     }
@@ -211,9 +211,9 @@
     }
 
     .section-title {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
-      color: var(--text-secondary);
+      color: var(--text);
       cursor: pointer;
     }
 
@@ -255,28 +255,31 @@
 
     /* Button - Notion style */
     .btn {
-      padding: 4px 10px;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 13px;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 14px;
       font-family: var(--font);
       cursor: pointer;
-      transition: background 0.1s ease;
+      transition: all 0.15s ease;
       font-weight: 500;
+      background: var(--bg);
+      color: var(--text);
     }
 
     .btn-primary {
       background: var(--text);
-      color: white;
+      color: var(--bg);
+      border-color: var(--text);
     }
 
-    .btn-primary:hover { background: #2d2d2d; }
+    .btn-primary:hover { background: var(--bg-secondary); color: var(--text); }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .btn-secondary {
       background: transparent;
       color: var(--text-secondary);
-      border: none;
+      border: 1px solid var(--border);
     }
 
     .btn-secondary:hover { background: var(--bg-secondary); color: var(--text); }
@@ -347,36 +350,59 @@
       transition: width 0.3s ease;
     }
 
-    /* Steps - Notion list style */
+    /* Steps - horizontal timeline style */
     .steps {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      gap: 0;
+      overflow-x: auto;
+      padding: 8px 0;
     }
 
     .step {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 6px 10px;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 80px;
+      padding: 8px 4px;
       border-radius: var(--radius);
       cursor: pointer;
       transition: background 0.1s ease;
+      position: relative;
     }
 
     .step:hover { background: var(--bg-secondary); }
     .step.active { background: var(--accent-light); }
 
+    .step::after {
+      content: '';
+      position: absolute;
+      top: 21px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+    }
+
+    .step:last-child::after { display: none; }
+
+    .step.completed::after,
+    .step.active::after { background: var(--accent); }
+
     .step-dot {
-      width: 18px;
-      height: 18px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       border: 2px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      margin-top: 1px;
+      background: var(--bg);
+      z-index: 1;
       transition: all 0.15s ease;
+      margin-bottom: 8px;
     }
 
     .step.active .step-dot {
@@ -390,8 +416,8 @@
     }
 
     .step-dot svg {
-      width: 10px;
-      height: 10px;
+      width: 16px;
+      height: 16px;
       fill: white;
       opacity: 0;
     }
@@ -399,22 +425,287 @@
     .step.completed .step-dot svg,
     .step.active .step-dot svg { opacity: 1; fill: white; }
 
-    .step-info { flex: 1; }
+    .step-info { text-align: center; width: 100%; }
 
     .step-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       color: var(--text);
+      white-space: nowrap;
     }
 
     .step-desc {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-tertiary);
+      margin-top: 2px;
+      white-space: nowrap;
     }
 
     .step-status {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
+    .step.completed .step-status { color: var(--text); }
+    .step.active .step-status { color: var(--accent); font-weight: 500; }
+
+    .step.pending .step-dot {
+      border-color: var(--border);
+      background: var(--bg-secondary);
+    }
+
+    /* Notion-style workspace */
+    .notion-header {
+      padding: 0 0 20px 0;
+    }
+
+    .notion-title {
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 6px 0;
+    }
+
+    .notion-subtitle {
+      font-size: 15px;
+      color: var(--text-tertiary);
+      margin: 0;
+    }
+
+    /* Creator block - modern input area */
+    .creator-block {
+      margin-bottom: 24px;
+    }
+
+    .creator-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .creator-input-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 16px;
+      transition: all 0.15s ease;
+    }
+
+    .creator-input-container:focus-within {
+      border-color: var(--text);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .creator-icon {
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+
+    .creator-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 12px 0;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .creator-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .creator-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .creator-label {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+
+    .creator-select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      min-width: 120px;
+    }
+
+    .creator-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--text);
+      color: var(--bg);
+      border: 1px solid var(--text);
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .creator-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .creator-btn:active {
+      transform: translateY(0);
+    }
+
+    .creator-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .notion-block {
+      padding: 16px 0;
+      margin-bottom: 8px;
+    }
+
+    .notion-block-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .notion-block-icon {
+      font-size: 14px;
+    }
+
+    .notion-block-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .notion-input-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .notion-input {
+      flex: 1;
+      min-width: 280px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 15px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+    }
+
+    .notion-input:focus {
+      border-color: var(--text);
+    }
+
+    .notion-select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 15px;
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .notion-btn {
+      padding: 10px 20px;
+      background: var(--text);
+      color: var(--bg);
+      border: 1px solid var(--text);
+      border-radius: 4px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .notion-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text);
+    }
+
+    .notion-steps {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .notion-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 3px;
+      cursor: default;
+      transition: all 0.15s;
+      font-size: 13px;
+    }
+
+    .notion-step:hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .notion-step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .notion-step.active .notion-step-dot {
+      background: #000;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .notion-step.completed .notion-step-dot {
+      background: #000;
+    }
+
+    .notion-step-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .notion-step-name {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .notion-step.active .notion-step-name {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .notion-step.completed .notion-step-name {
+      color: var(--text);
     }
 
     /* News list */
@@ -608,28 +899,28 @@
 
     .form-label {
       display: block;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
+      color: var(--text);
+      margin-bottom: 8px;
     }
 
     .form-input {
       width: 100%;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 14px;
-      font-family: monospace;
+      border-radius: 4px;
+      font-size: 15px;
+      font-family: var(--font);
       background: var(--bg);
       color: var(--text);
       outline: none;
     }
 
-    .form-input:focus { border-color: var(--accent); background: var(--accent-light); }
+    .form-input:focus { border-color: var(--text); }
 
     .form-hint {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-tertiary);
       margin-top: 4px;
     }
@@ -741,19 +1032,6 @@
       resize: vertical;
       min-height: 80px;
     }
-
-    /* Settings modal - use overlay style */
-    #settingsModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    #settingsModal.active { display: flex; }
 
     /* Toast */
     .toast {
@@ -899,57 +1177,11 @@
       color: var(--text-tertiary);
     }
 
-    /* View toggle - Notion style */
-    .view-toggle {
-      display: flex;
-      gap: 2px;
-      margin-bottom: 16px;
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      padding: 3px;
-      width: fit-content;
-    }
-
-    .toggle-btn {
-      padding: 5px 10px;
-      border: none;
-      background: transparent;
-      border-radius: 4px;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .toggle-btn:hover {
-      background: var(--bg-hover);
-    }
-
-    .toggle-btn.active {
-      background: var(--bg);
-      color: var(--text);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
     /* Project cards */
     .projects-grid {
       display: flex;
       flex-direction: column;
       gap: 2px;
-    }
-
-    .projects-grid.list-view {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .projects-grid.grid-view {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
     }
 
     .project-card {
@@ -963,72 +1195,13 @@
       border: 1px solid transparent;
     }
 
-    .projects-grid.list-view .project-card:hover {
+    .project-card:hover {
       background: var(--bg-secondary);
-    }
-
-    .projects-grid.grid-view {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 8px;
-    }
-
-    .projects-grid.grid-view .project-card {
-      flex-direction: column;
-      align-items: stretch;
-      padding: 0;
-      background: var(--bg);
-      border-radius: 4px;
-      border: 1px solid transparent;
-      overflow: hidden;
-      transition: all 0.15s;
-    }
-
-    .projects-grid.grid-view .project-card:hover {
-      border-color: var(--border);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
     .project-icon {
       font-size: 18px;
       flex-shrink: 0;
-    }
-
-    .projects-grid.grid-view .project-icon {
-      display: none;
-    }
-
-    .projects-grid.grid-view .project-thumb {
-      width: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      background: var(--bg-secondary);
-      display: block;
-    }
-
-    .projects-grid.grid-view .project-info {
-      padding: 8px 10px;
-    }
-
-    .projects-grid.grid-view .project-name {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .projects-grid.grid-view .project-files {
-      justify-content: flex-start;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-
-    .projects-grid.grid-view .file-tag {
-      font-size: 10px;
-      padding: 1px 4px;
     }
 
     .project-name {
@@ -1055,8 +1228,14 @@
       color: var(--text-secondary);
     }
 
-    .projects-grid.grid-view .file-tag {
-      background: var(--bg-secondary);
+    .projects-container {
+      width: 100%;
+    }
+
+    .projects-container #projectsGrid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .project-breadcrumb {
@@ -1080,22 +1259,21 @@
     .file-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
     }
 
     .file-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
+      padding: 8px 12px;
+      border-radius: 4px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.15s;
     }
 
     .file-row:hover {
-      background: var(--bg-hover);
+      background: var(--bg-secondary);
     }
 
     .tab-content {
@@ -1275,19 +1453,23 @@
           <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
         </div>
 
-        <div class="nav-section-label">工具</div>
-
-        <div class="nav-item" data-page="logs">
-          <div class="nav-icon">📋</div>
-          <span>运行日志</span>
+        <div class="nav-item" data-page="article-fetcher">
+          <div class="nav-icon">🔍</div>
+          <span>文章抓取</span>
           <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
         </div>
 
         <div class="nav-section-label">设置</div>
 
-        <div class="nav-item" id="openSettings">
+        <div class="nav-item" data-page="settings">
           <div class="nav-icon">⚙️</div>
           <span>设置</span>
+          <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+
+        <div class="nav-item" data-page="logs">
+          <div class="nav-icon">📋</div>
+          <span>运行日志</span>
           <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
         </div>
       </nav>
@@ -1304,182 +1486,316 @@
             <p class="page-subtitle">输入主题，一键生成文章、配图和视频</p>
           </div>
 
-          <div class="divider"></div>
-
-          <!-- Input section -->
-          <div class="section">
-            <div class="section-header">
-              <div class="section-icon">✏️</div>
-              <span class="section-title">创作主题</span>
-            </div>
-            <div class="input-row">
-              <input type="text" class="input-block" id="topicInput" placeholder="输入创作主题，如：人工智能最新进展">
-              <select class="input-block" id="daysSelect">
-                <option value="7">最近 7 天</option>
-                <option value="14">最近 14 天</option>
-                <option value="30">最近 30 天</option>
-              </select>
-              <button class="btn btn-primary" id="startBtn">开始创作</button>
-            </div>
-          </div>
-
-          <!-- Steps progress -->
-          <div class="section">
-            <div class="section-header">
-              <div class="section-icon">📊</div>
-              <span class="section-title">创作进度</span>
-            </div>
-            <div class="steps" id="stepsContainer">
-              <div class="step active" data-step="1">
-                <div class="step-dot">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </div>
-                <div class="step-info">
-                  <div class="step-name">新闻搜索</div>
-                  <div class="step-desc">获取最新资讯</div>
-                </div>
-                <div class="step-status">待执行</div>
+          <!-- Input block - Notion style -->
+          <div class="creator-block">
+            <div class="creator-input-wrapper">
+              <div class="creator-input-container">
+                <svg class="creator-icon" viewBox="0 0 24 24" width="18" height="18">
+                  <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="creator-input" id="topicInput" placeholder="输入创作主题，如：人工智能最新进展">
               </div>
-              <div class="step" data-step="2">
-                <div class="step-dot">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </div>
-                <div class="step-info">
-                  <div class="step-name">文章生成</div>
-                  <div class="step-desc">生成公众号文章</div>
-                </div>
-                <div class="step-status">待执行</div>
-              </div>
-              <div class="step" data-step="3">
-                <div class="step-dot">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </div>
-                <div class="step-info">
-                  <div class="step-name">配图搜索</div>
-                  <div class="step-desc">自动匹配配图</div>
-                </div>
-                <div class="step-status">待执行</div>
-              </div>
-              <div class="step" data-step="4">
-                <div class="step-dot">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </div>
-                <div class="step-info">
-                  <div class="step-name">文档导出</div>
-                  <div class="step-desc">生成 Word 文档</div>
-                </div>
-                <div class="step-status">待执行</div>
-              </div>
-              <div class="step" data-step="5">
-                <div class="step-dot">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </div>
-                <div class="step-info">
-                  <div class="step-name">内容提炼</div>
-                  <div class="step-desc">生成视频配置</div>
-                </div>
-                <div class="step-status">待执行</div>
-              </div>
-              <div class="step" data-step="6">
-                <div class="step-dot">
-                  <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                </div>
-                <div class="step-info">
-                  <div class="step-name">视频生成</div>
-                  <div class="step-desc">生成短视频</div>
-                </div>
-                <div class="step-status">待执行</div>
+              <div class="creator-actions">
+                <span class="creator-label">搜索时间范围</span>
+                <select class="creator-select" id="daysSelect">
+                  <option value="7">最近 7 天</option>
+                  <option value="14">最近 14 天</option>
+                  <option value="30">最近 30 天</option>
+                </select>
+                <button class="creator-btn" id="startBtn">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M8 5v14l11-7z"/>
+                  </svg>
+                  开始创作
+                </button>
               </div>
             </div>
           </div>
 
-          <!-- Progress bar -->
-          <div class="progress">
-            <div class="progress-header">
-              <span class="progress-label">完成度</span>
-              <span class="progress-value" id="progressValue">0%</span>
+          <!-- Steps block - Notion style -->
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">📊</span>
+              <span class="notion-block-title">创作进度</span>
             </div>
-            <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <!-- News results -->
-          <div class="section" id="newsSection">
-            <div class="section-header">
-              <div class="section-icon">📰</div>
-              <span class="section-title">新闻搜索</span>
-            </div>
-            <div id="newsContainer">
-              <div class="empty">输入主题后开始创作</div>
-            </div>
-          </div>
-
-          <!-- Article -->
-          <div class="section" id="articleSection">
-            <div class="section-header">
-              <div class="section-icon">📝</div>
-              <span class="section-title">生成文章</span>
-            </div>
-            <div id="articleContainer">
-              <div class="empty">新闻搜索后自动生成</div>
-            </div>
-          </div>
-
-          <!-- Images -->
-          <div class="section" id="imageSection">
-            <div class="section-header">
-              <div class="section-icon">🖼️</div>
-              <span class="section-title">配图展示</span>
-            </div>
-            <div id="imageContainer">
-              <div class="empty">文章生成后自动搜索</div>
-            </div>
-          </div>
-
-          <!-- Video -->
-          <div class="section" id="videoSection">
-            <div class="section-header">
-              <div class="section-icon">🎬</div>
-              <span class="section-title">视频预览</span>
-            </div>
-            <div id="videoContainer">
-              <div class="empty">内容提炼后自动生成</div>
-            </div>
-          </div>
-
-          <!-- Output files -->
-          <div class="section" id="outputSection">
-            <div class="section-header">
-              <div class="section-icon">📁</div>
-              <span class="section-title">成果文件</span>
-            </div>
-            <div id="outputContainer">
-              <div class="empty">创作完成后显示成果文件</div>
+            <div class="notion-steps" id="stepsContainer">
+              <div class="notion-step active" data-step="1">
+                <div class="notion-step-dot"></div>
+                <div class="notion-step-info">
+                  <div class="notion-step-name">新闻搜索</div>
+                </div>
+              </div>
+              <div class="notion-step" data-step="2">
+                <div class="notion-step-dot"></div>
+                <div class="notion-step-info">
+                  <div class="notion-step-name">文章生成</div>
+                </div>
+              </div>
+              <div class="notion-step" data-step="3">
+                <div class="notion-step-dot"></div>
+                <div class="notion-step-info">
+                  <div class="notion-step-name">配图搜索</div>
+                </div>
+              </div>
+              <div class="notion-step" data-step="4">
+                <div class="notion-step-dot"></div>
+                <div class="notion-step-info">
+                  <div class="notion-step-name">文档导出</div>
+                </div>
+              </div>
+              <div class="notion-step" data-step="5">
+                <div class="notion-step-dot"></div>
+                <div class="notion-step-info">
+                  <div class="notion-step-name">内容提炼</div>
+                </div>
+              </div>
+              <div class="notion-step" data-step="6">
+                <div class="notion-step-dot"></div>
+                <div class="notion-step-info">
+                  <div class="notion-step-name">视频生成</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 新闻库页面 -->
-        <div class="page-view" id="view-news" style="display: none;">
+        <!-- 设置页面 -->
+        <div class="page-view" id="view-settings" style="display: none;">
           <div class="page-header">
-            <div class="page-emoji">📰</div>
-            <h1 class="page-title">新闻库</h1>
-            <p class="page-subtitle">已搜索的新闻列表</p>
+            <div class="page-emoji">⚙️</div>
+            <h1 class="page-title">设置</h1>
+            <p class="page-subtitle">配置 API 密钥和其他选项</p>
           </div>
-          <div class="divider"></div>
-          <div class="section">
-            <div class="input-row">
-              <input type="text" class="input-block" id="newsSearchInput" placeholder="搜索新闻...">
-              <button class="btn btn-primary" id="searchNewsBtn">搜索</button>
+          
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">🔍</span>
+              <span class="notion-block-title">新闻搜索 API</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tavily API Key</label>
+              <input type="password" class="form-input" id="tavilyKey" placeholder="tvly-xxxxxxxx">
+              <p class="form-hint">免费额度 1000 次/月 · tavily.com</p>
             </div>
           </div>
-          <div class="section">
-            <div id="newsLibraryContainer">
-              <div class="empty">暂无新闻记录</div>
+          
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">🤖</span>
+              <span class="notion-block-title">大模型配置</span>
             </div>
+            <div class="form-group">
+              <label class="form-label">默认使用的模型</label>
+              <select class="form-input" id="defaultModelSelect">
+                <option value="">请选择默认模型</option>
+                <option value="minimax">MiniMax</option>
+                <option value="deepseek">DeepSeek</option>
+                <option value="openai">OpenAI</option>
+                <option value="custom">自定义 API</option>
+              </select>
+              <p class="form-hint">选择创作时默认使用的大模型</p>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">配置模型（选择要配置的模型）</label>
+              <select class="form-input" id="modelTypeSelect" onchange="showModelConfig()">
+                <option value="">请选择模型类型</option>
+                <option value="minimax">MiniMax</option>
+                <option value="deepseek">DeepSeek</option>
+                <option value="openai">OpenAI</option>
+                <option value="custom">自定义 API</option>
+              </select>
+            </div>
+            
+            <!-- MiniMax Config -->
+            <div id="minimaxConfig" class="model-config" style="display: none;">
+              <div class="form-group">
+                <label class="form-label">API Key</label>
+                <input type="password" class="form-input" id="minimaxKey" placeholder="sk-cp-xxxxxxxx">
+                <p class="form-hint">用于调用 MiniMax 大模型生成文章和视频内容</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">模型名称</label>
+                <input type="text" class="form-input" id="minimaxModel" placeholder="MiniMax-M2.7" value="MiniMax-M2.7">
+                <p class="form-hint">默认使用 MiniMax-M2.7</p>
+              </div>
+              <div class="form-group">
+                <button class="btn btn-secondary" onclick="testModelConnection('minimax')" id="minimaxTestBtn">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  测试连接
+                </button>
+                <span id="minimaxTestResult" class="test-result"></span>
+              </div>
+            </div>
+            
+            <!-- DeepSeek Config -->
+            <div id="deepseekConfig" class="model-config" style="display: none;">
+              <div class="form-group">
+                <label class="form-label">API Key</label>
+                <input type="password" class="form-input" id="deepseekKey" placeholder="sk-xxxxxxxx">
+                <p class="form-hint">DeepSeek 大模型 API Key · deepseek.com</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Base URL</label>
+                <input type="text" class="form-input" id="deepseekBaseUrl" placeholder="https://api.deepseek.com/v1" value="https://api.deepseek.com/v1">
+                <p class="form-hint">DeepSeek API 服务地址</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">模型名称</label>
+                <input type="text" class="form-input" id="deepseekModel" placeholder="deepseek-chat" value="deepseek-chat">
+                <p class="form-hint">支持 deepseek-chat, deepseek-coder 等</p>
+              </div>
+              <div class="form-group">
+                <button class="btn btn-secondary" onclick="testModelConnection('deepseek')" id="deepseekTestBtn">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  测试连接
+                </button>
+                <span id="deepseekTestResult" class="test-result"></span>
+              </div>
+            </div>
+            
+            <!-- OpenAI Config -->
+            <div id="openaiConfig" class="model-config" style="display: none;">
+              <div class="form-group">
+                <label class="form-label">API Key</label>
+                <input type="password" class="form-input" id="openaiKey" placeholder="sk-xxxxxxxx">
+                <p class="form-hint">OpenAI 大模型 API Key · openai.com</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Base URL</label>
+                <input type="text" class="form-input" id="openaiBaseUrl" placeholder="https://api.openai.com/v1" value="https://api.openai.com/v1">
+                <p class="form-hint">可自定义为其他兼容 OpenAI 协议的服务</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">模型名称</label>
+                <input type="text" class="form-input" id="openaiModel" placeholder="gpt-4o" value="gpt-4o">
+                <p class="form-hint">支持 gpt-4o, gpt-4, gpt-3.5-turbo 等</p>
+              </div>
+              <div class="form-group">
+                <button class="btn btn-secondary" onclick="testModelConnection('openai')" id="openaiTestBtn">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  测试连接
+                </button>
+                <span id="openaiTestResult" class="test-result"></span>
+              </div>
+            </div>
+            
+            <!-- Custom API Config -->
+            <div id="customConfig" class="model-config" style="display: none;">
+              <div class="form-group">
+                <label class="form-label">API Key</label>
+                <input type="password" class="form-input" id="customApiKey" placeholder="your-api-key">
+                <p class="form-hint">自定义 API 的密钥</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Base URL</label>
+                <input type="text" class="form-input" id="customBaseUrl" placeholder="https://api.example.com/v1">
+                <p class="form-hint">自定义 API 服务地址（需兼容 OpenAI 协议）</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">模型名称</label>
+                <input type="text" class="form-input" id="customModel" placeholder="model-name">
+                <p class="form-hint">使用的模型名称</p>
+              </div>
+              <div class="form-group">
+                <button class="btn btn-secondary" onclick="testModelConnection('custom')" id="customTestBtn">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  测试连接
+                </button>
+                <span id="customTestResult" class="test-result"></span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">📁</span>
+              <span class="notion-block-title">文件目录</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">输出目录</label>
+              <div class="dir-input-row">
+                <input type="text" class="form-input" id="outputDir" placeholder="点击按钮选择输出文件夹">
+                <button class="btn btn-secondary" id="selectDirBtn">选择文件夹</button>
+              </div>
+              <p class="form-hint">生成文件将保存在此目录</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">风格文件目录</label>
+              <div class="dir-input-row">
+                <input type="text" class="form-input" id="styleDir" placeholder="点击按钮选择风格文件夹">
+                <button class="btn btn-secondary" id="selectStyleDirBtn">选择文件夹</button>
+              </div>
+              <p class="form-hint">包含 style-guide.md 等风格参考文件</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">文章抓取保存目录</label>
+              <div class="dir-input-row">
+                <input type="text" class="form-input" id="articleFetchDir" placeholder="默认与风格文件目录相同">
+                <button class="btn btn-secondary" id="selectArticleFetchDirBtn">选择文件夹</button>
+              </div>
+              <p class="form-hint">抓取的文章保存在此目录（建议与风格文件目录相同）</p>
+            </div>
+          </div>
+          
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">✏️</span>
+              <span class="notion-block-title">文章信息</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">内容编辑</label>
+              <input type="text" class="form-input" id="articleEditor" placeholder="虾朋马友">
+              <p class="form-hint">文章编辑署名</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">内容审核</label>
+              <input type="text" class="form-input" id="articleReviewer" placeholder="休蒙">
+              <p class="form-hint">文章审核署名</p>
+            </div>
+            <button class="btn btn-primary" id="saveSettings" style="margin-top: 24px;">保存设置</button>
+          </div>
+        </div>
+
+        <!-- 文章抓取页面 -->
+        <div class="page-view" id="view-article-fetcher" style="display: none;">
+          <div class="page-header">
+            <div class="page-emoji">🔍</div>
+            <h1 class="page-title">文章抓取</h1>
+            <p class="page-subtitle">抓取微信公众号文章进行分析和学习（保存在设置的风格文件目录）</p>
+          </div>
+          
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">📥</span>
+              <span class="notion-block-title">抓取公众号文章</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">文章链接</label>
+              <input type="text" class="form-input" id="articleUrl" placeholder="输入微信公众号文章链接">
+              <p class="form-hint">支持公众号文章链接</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label">保存目录（默认与风格文件目录相同）</label>
+              <div class="dir-input-row">
+                <input type="text" class="form-input" id="articleOutputDir" placeholder="默认使用风格文件目录">
+                <button class="btn btn-secondary" id="selectArticleDirBtn">选择文件夹</button>
+              </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; gap: 12px;">
+              <button class="btn btn-primary" id="fetchArticleBtn" onclick="fetchArticle()">
+                <span id="fetchArticleText">抓取文章</span>
+              </button>
+            </div>
+            <div id="fetchResult" style="margin-top: 20px;"></div>
           </div>
         </div>
 
@@ -1490,18 +1806,16 @@
             <h1 class="page-title">项目</h1>
             <p class="page-subtitle">所有已输出的创作项目</p>
           </div>
-          <div class="divider"></div>
-          <div id="projectDetail">
-            <div class="view-toggle">
-              <button class="toggle-btn active" id="listViewBtn" onclick="setProjectView('list')" title="列表视图">
-                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
-              </button>
-              <button class="toggle-btn" id="gridViewBtn" onclick="setProjectView('grid')" title="画廊视图">
-                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
-              </button>
+          
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">📂</span>
+              <span class="notion-block-title">项目列表</span>
             </div>
-            <div id="projectsGrid">
-              <div class="empty">暂无项目（请先运行创作流程）</div>
+            <div id="projectDetail" class="projects-container">
+              <div id="projectsGrid">
+                <div class="empty">暂无项目（请先运行创作流程）</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1513,8 +1827,12 @@
             <h1 class="page-title">运行日志</h1>
             <p class="page-subtitle">实时查看系统运行状态</p>
           </div>
-          <div class="divider"></div>
-          <div class="section">
+          
+          <div class="notion-block">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">📜</span>
+              <span class="notion-block-title">日志记录</span>
+            </div>
             <div class="log-toolbar">
               <button class="btn btn-secondary" id="clearLogsBtn">清空日志</button>
               <label class="log-auto-scroll">
@@ -1529,54 +1847,6 @@
         </div>
       </div>
     </main>
-  </div>
-
-  <!-- Settings modal -->
-  <div class="modal-overlay" id="settingsModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 class="modal-title">API 配置</h3>
-        <button class="modal-close" id="closeSettings">
-          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Tavily API Key（新闻搜索）</label>
-          <input type="password" class="form-input" id="tavilyKey" placeholder="tvly-xxxxxxxx">
-          <p class="form-hint">免费额度 1000 次/月 · tavily.com</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label">MiniMax API Key（文章生成）</label>
-          <input type="password" class="form-input" id="minimaxKey" placeholder="sk-cp-xxxxxxxx">
-          <p class="form-hint">用于调用大模型生成文章和视频内容</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label">输出目录</label>
-          <div class="dir-input-row">
-            <input type="text" class="form-input" id="outputDir" placeholder="点击按钮选择输出文件夹">
-            <button class="btn btn-secondary" id="selectDirBtn">选择文件夹</button>
-          </div>
-          <p class="form-hint">生成文件将保存在此目录</p>
-        </div>
-        <div class="divider" style="margin: 20px 0;"></div>
-        <h4 style="margin-bottom: 12px; color: var(--text);">文章信息</h4>
-        <div class="form-group">
-          <label class="form-label">内容编辑</label>
-          <input type="text" class="form-input" id="articleEditor" placeholder="虾朋马友">
-          <p class="form-hint">文章编辑署名</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label">内容审核</label>
-          <input type="text" class="form-input" id="articleReviewer" placeholder="休蒙">
-          <p class="form-hint">文章审核署名</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancelSettings">取消</button>
-        <button class="btn btn-primary" id="saveSettings">保存</button>
-      </div>
-    </div>
   </div>
 
   <!-- Toast -->
@@ -1638,7 +1908,9 @@
       imagesDir: '',
       files: [],
       outputDir: '',
-      projectView: 'list'
+      modelProvider: 'minimax',
+      modelName: null,
+      baseUrl: null
     };
 
     const $ = id => document.getElementById(id);
@@ -1680,27 +1952,13 @@
     }
 
     function updateProgress() {
-      const done = Object.values(STEPS).filter(s => s === 'success').length;
-      const pct = Math.round((done / 6) * 100);
-      $('progressValue').textContent = pct + '%';
-      $('progressFill').style.width = pct + '%';
     }
 
     function setStep(step, status, errorMsg = '') {
       STEPS[step] = status;
-      const el = document.querySelector(`.step[data-step="${step}"]`);
+      const el = document.querySelector(`.notion-step[data-step="${step}"]`);
       if (!el) return;
-      const statusEl = el.querySelector('.step-status');
-      const labels = { pending: '待执行', running: '执行中', success: '已完成', error: '失败' };
-      el.className = `step ${status === 'success' ? 'completed' : status === 'running' ? 'active' : status === 'error' ? 'error' : ''}`;
-      if (statusEl) statusEl.textContent = errorMsg || labels[status] || status;
-    }
-
-    function renderError(container, msg) {
-      $(container).innerHTML = `<div class="error-block">
-        <div class="error-icon">⚠️</div>
-        <div class="error-msg">${msg}</div>
-      </div>`;
+      el.className = `notion-step ${status === 'success' ? 'completed' : status === 'running' ? 'active' : status === 'error' ? 'error' : ''}`;
     }
 
     class ApiClient {
@@ -1727,8 +1985,11 @@
       async searchNews(q, topic, days, n = 10, outputDir = '') {
         return this.req('/news/search', { method: 'POST', body: { query: q, topic, days, num: n, output_dir: outputDir } });
       }
-      async generateArticle(researchFile, outputDir) {
-        return this.req('/article/generate', { method: 'POST', body: { research_file: researchFile, output_dir: outputDir } });
+      async testModel(data) {
+        return this.req('/model/test', { method: 'POST', body: data });
+      }
+      async generateArticle(researchFile, outputDir, modelProvider = 'minimax', modelName = null, baseUrl = null) {
+        return this.req('/article/generate', { method: 'POST', body: { research_file: researchFile, output_dir: outputDir, model_provider: modelProvider, model_name: modelName, base_url: baseUrl } });
       }
       async searchImages(q, n = 6, outputDir = '') {
         return this.req('/images/search', { method: 'POST', body: { query: q, num: n, output_dir: outputDir } });
@@ -1748,8 +2009,14 @@
       async openFile(path) {
         return this.req('/file/open', { method: 'POST', body: { path } });
       }
+      async selectDirectory() {
+        return this.req('/dialog/select-directory', { method: 'POST' });
+      }
       async readFile(path) {
         return this.req('/file/read', { method: 'POST', body: { path } });
+      }
+      async fetchArticle(url, outputDir) {
+        return this.req('/article/fetch', { method: 'POST', body: { url, output_dir: outputDir } });
       }
     }
 
@@ -1782,6 +2049,22 @@
       const days = parseInt($('daysSelect').value);
       if (!topic) throw new Error('请输入创作主题');
       state.topic = topic;
+      
+      // Get default model provider from config
+      const cfg = JSON.parse(localStorage.getItem('cfg') || '{}');
+      const modelProvider = cfg.default_model_provider || 'minimax';
+      state.modelProvider = modelProvider;
+      
+      // Get model-specific configuration
+      const modelNameInput = $(modelProvider + 'Model');
+      const baseUrlInput = $(modelProvider + 'BaseUrl');
+      if (modelNameInput) {
+        state.modelName = modelNameInput.value || null;
+      }
+      if (baseUrlInput) {
+        state.baseUrl = baseUrlInput.value || null;
+      }
+      
       toast('正在搜索新闻...');
       logger.info(`搜索新闻: ${topic}, 时间范围: 最近${days}天`);
       try {
@@ -1791,38 +2074,25 @@
         state.researchFile = r.research_file || '';
         if (state.news.length === 0) {
           logger.warn('未找到相关新闻');
-          renderError('newsContainer', '未找到相关新闻，请尝试其他关键词或扩大搜索时间范围');
           throw new Error('未找到相关新闻');
         } else {
           logger.success(`找到 ${state.news.length} 条新闻`);
           logger.info(`输出目录: ${state.outputDir}`);
-          addToHistory('news', {
-            topic,
-            date: new Date().toISOString(),
-            results: state.news.slice(0, 5),
-            outputDir: state.outputDir
-          });
+          try {
+            addToHistory('news', {
+              topic,
+              date: new Date().toISOString(),
+              results: state.news.slice(0, 5),
+              outputDir: state.outputDir
+            });
+          } catch (e) {
+            logger.warn('保存历史记录失败: ' + e.message);
+          }
         }
-        renderNews();
       } catch (e) {
         logger.error('搜索失败: ' + e.message);
-        renderError('newsContainer', e.message);
         throw e;
       }
-    }
-
-    function renderNews() {
-      if (!state.news.length) {
-        $('newsContainer').innerHTML = '<div class="empty">未找到相关新闻</div>';
-        return;
-      }
-      $('newsContainer').innerHTML = `<div class="news-list">
-        ${state.news.map(n => `<div class="news-item">
-          <div class="news-title">${n.title}</div>
-          <div class="news-meta"><span class="news-source">${n.source || ''}</span><span>${n.published_date || ''}</span></div>
-          ${n.content ? `<div class="news-content">${n.content}</div>` : ''}
-        </div>`).join('')}
-      </div>`;
     }
 
     async function stepArticle() {
@@ -1835,7 +2105,7 @@
       toast('正在生成文章...');
       logger.info('开始生成文章（调用 article-writer 技能）...');
       try {
-        const r = await api.generateArticle(state.researchFile, state.outputDir);
+        const r = await api.generateArticle(state.researchFile, state.outputDir, state.modelProvider, state.modelName, state.baseUrl);
         state.article = r.article || '';
         state.articleFile = r.file || '';
         if (!state.article) {
@@ -1848,16 +2118,10 @@
           content: state.article.substring(0, 200),
           filePath: state.articleFile
         });
-        renderArticle();
       } catch (e) {
         logger.error('文章生成失败: ' + e.message);
-        renderError('articleContainer', e.message);
         throw e;
       }
-    }
-
-    function renderArticle() {
-      $('articleContainer').innerHTML = `<div class="article-content">${state.article}</div>`;
     }
 
     async function stepImages() {
@@ -1874,7 +2138,6 @@
       } catch (e) {
         state.images = [];
         logger.error('配图搜索失败: ' + e.message);
-        renderError('imageContainer', '配图搜索失败: ' + e.message);
         throw e;
       }
       if (!state.images.length) {
@@ -1883,13 +2146,6 @@
           title: `配图 ${i + 1}`
         }));
       }
-      renderImages();
-    }
-
-    function renderImages() {
-      $('imageContainer').innerHTML = `<div class="gallery">
-        ${state.images.map(img => `<div class="gallery-item"><img src="${img.url}" alt="${img.title}" loading="lazy"></div>`).join('')}
-      </div>`;
     }
 
     async function stepWord() {
@@ -1904,11 +2160,9 @@
         logger.success(`Word 文档已导出: ${r.path}`);
       } catch (e) {
         state.files.push({ name: '04_article.docx', path: '导出失败' });
-        renderFiles();
         logger.error('Word导出失败: ' + e.message);
         throw new Error('Word导出失败: ' + e.message);
       }
-      renderFiles();
     }
 
     async function stepShorten() {
@@ -1923,11 +2177,9 @@
         logger.success(`content.json 已生成: ${r.file}`);
       } catch (e) {
         state.files.push({ name: '05_content.json', path: '生成失败' });
-        renderFiles();
         logger.error('内容提炼失败: ' + e.message);
         throw new Error('内容提炼失败: ' + e.message);
       }
-      renderFiles();
     }
 
     async function stepVideo() {
@@ -1951,8 +2203,6 @@
         state.files.push({ name: '06_video.mp4', path: '生成失败' });
         throw e;
       }
-      $('videoContainer').innerHTML = '<div class="video-block"><svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></div>';
-      renderFiles();
     }
 
     // 加载库页面数据
@@ -2055,19 +2305,22 @@
     };
 
     function renderLogs() {
+      const container = $('logContainer');
+      if (!container) return;
       if (!logs.length) {
-        $('logContainer').innerHTML = '<div class="empty" style="color:#666;">暂无日志记录</div>';
+        container.innerHTML = '<div class="empty" style="color:#666;">暂无日志记录</div>';
         return;
       }
-      $('logContainer').innerHTML = logs.map(log => `
+      container.innerHTML = logs.map(log => `
         <div class="log-entry">
           <span class="log-time">${log.time}</span>
           <span class="log-level ${log.level}">${log.level.toUpperCase()}</span>
           <span class="log-message">${escapeHtml(log.message)}</span>
         </div>
       `).join('');
-      if ($('autoScrollCheck').checked) {
-        $('logContainer').scrollTop = $('logContainer').scrollHeight;
+      const autoScroll = $('autoScrollCheck');
+      if (autoScroll && autoScroll.checked) {
+        container.scrollTop = container.scrollHeight;
       }
     }
 
@@ -2164,6 +2417,61 @@
       currentVideoData = null;
     }
 
+    function showModelConfig() {
+      const selected = $('modelTypeSelect').value;
+      const configs = ['minimaxConfig', 'deepseekConfig', 'openaiConfig', 'customConfig'];
+      configs.forEach(id => {
+        $(id).style.display = 'none';
+      });
+      if (selected) {
+        $(selected + 'Config').style.display = 'block';
+      }
+    }
+
+    async function testModelConnection(provider) {
+      const apiKeyInput = $(provider + 'Key');
+      const modelInput = $(provider + 'Model');
+      const baseUrlInput = $(provider + 'BaseUrl');
+      const resultSpan = $(provider + 'TestResult');
+      const testBtn = $(provider + 'TestBtn');
+      
+      const apiKey = apiKeyInput.value.trim();
+      const model = modelInput ? modelInput.value.trim() : '';
+      const baseUrl = baseUrlInput ? baseUrlInput.value.trim() : '';
+      
+      if (!apiKey) {
+        toast('请先填写 API Key', 'error');
+        return;
+      }
+      
+      testBtn.disabled = true;
+      testBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> 测试中...';
+      resultSpan.textContent = '';
+      
+      try {
+        const r = await api.testModel({
+          provider,
+          api_key: apiKey,
+          model,
+          base_url: baseUrl
+        });
+        
+        if (r.success) {
+          resultSpan.innerHTML = '<span style="color: #16a34a; margin-left: 8px;">✓ 连接成功</span>';
+          toast('连接测试成功！', 'success');
+        } else {
+          resultSpan.innerHTML = `<span style="color: #dc2626; margin-left: 8px;">✗ ${r.error}</span>`;
+          toast('连接测试失败: ' + r.error, 'error');
+        }
+      } catch (e) {
+        resultSpan.innerHTML = `<span style="color: #dc2626; margin-left: 8px;">✗ ${e.message}</span>`;
+        toast('连接测试失败: ' + e.message, 'error');
+      } finally {
+        testBtn.disabled = false;
+        testBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 测试连接';
+      }
+    }
+
     $('saveContentBtn').addEventListener('click', async () => {
       if (!currentVideoData || !currentVideoData.contentFile) {
         toast('没有找到 content.json 文件', 'error');
@@ -2239,24 +2547,46 @@
       renderLogs();
     }
 
-    function renderFiles() {
-      if (!state.files.length) {
-        $('outputContainer').innerHTML = '<div class="empty">创作完成后显示成果文件</div>';
-        return;
-      }
-      const icon = '<svg class="file-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>';
-      $('outputContainer').innerHTML = `<div class="files">
-        ${state.files.map(f => `<div class="file-item">${icon}<div class="file-info"><div class="file-name">${f.name}</div><div class="file-path">${f.path || '生成中...'}</div></div></div>`).join('')}
-      </div>`;
-    }
-
     async function loadConfig() {
+      const defaultRefDir = 'reference';
       try {
         const r = await api.getConfig();
         if (r.success && r.config) {
           $('tavilyKey').value = r.config.tavily_api_key || '';
           $('minimaxKey').value = r.config.minimax_api_key || '';
+          $('minimaxModel').value = r.config.minimax_model || 'MiniMax-M2.7';
+          $('deepseekKey').value = r.config.deepseek_api_key || '';
+          $('deepseekBaseUrl').value = r.config.deepseek_base_url || 'https://api.deepseek.com/v1';
+          $('deepseekModel').value = r.config.deepseek_model || 'deepseek-chat';
+          $('openaiKey').value = r.config.openai_api_key || '';
+          $('openaiBaseUrl').value = r.config.openai_base_url || 'https://api.openai.com/v1';
+          $('openaiModel').value = r.config.openai_model || 'gpt-4o';
+          $('customApiKey').value = r.config.custom_api_key || '';
+          $('customBaseUrl').value = r.config.custom_base_url || '';
+          $('customModel').value = r.config.custom_model || '';
+          
+          // Load default model provider
+          const defaultProvider = r.config.default_model_provider || '';
+          $('defaultModelSelect').value = defaultProvider;
+          
+          // Select model type for configuration panel (auto-detect if not set)
+          if (defaultProvider) {
+            $('modelTypeSelect').value = defaultProvider;
+          } else {
+            // Auto-select the first configured model
+            const providers = ['minimax', 'deepseek', 'openai', 'custom'];
+            for (const provider of providers) {
+              const apiKey = r.config[provider + '_api_key'];
+              if (apiKey && apiKey.trim()) {
+                $('modelTypeSelect').value = provider;
+                break;
+              }
+            }
+          }
+          
           $('outputDir').value = r.config.default_output_dir || '';
+          $('styleDir').value = r.config.style_dir || defaultRefDir;
+          $('articleFetchDir').value = r.config.article_fetch_dir || r.config.style_dir || defaultRefDir;
           $('articleEditor').value = r.config.article_editor || '';
           $('articleReviewer').value = r.config.article_reviewer || '';
           state.outputDir = r.config.default_output_dir || '';
@@ -2265,9 +2595,101 @@
         const c = JSON.parse(localStorage.getItem('cfg') || '{}');
         $('tavilyKey').value = c.tavily_api_key || c.tavilyKey || '';
         $('minimaxKey').value = c.minimax_api_key || c.minimaxKey || '';
+        $('minimaxModel').value = c.minimax_model || 'MiniMax-M2.7';
+        $('deepseekKey').value = c.deepseek_api_key || c.deepseekKey || '';
+        $('deepseekBaseUrl').value = c.deepseek_base_url || 'https://api.deepseek.com/v1';
+        $('deepseekModel').value = c.deepseek_model || 'deepseek-chat';
+        $('openaiKey').value = c.openai_api_key || c.openaiKey || '';
+        $('openaiBaseUrl').value = c.openai_base_url || 'https://api.openai.com/v1';
+        $('openaiModel').value = c.openai_model || 'gpt-4o';
+        $('customApiKey').value = c.custom_api_key || '';
+        $('customBaseUrl').value = c.custom_base_url || '';
+        $('customModel').value = c.custom_model || '';
+        
+        // Select default model or auto-detect from configured keys
+        const defaultProvider = c.default_model_provider || '';
+        if (defaultProvider) {
+          $('modelTypeSelect').value = defaultProvider;
+        } else {
+          // Auto-select the first configured model
+          const providers = ['minimax', 'deepseek', 'openai', 'custom'];
+          for (const provider of providers) {
+            const apiKey = c[provider + '_api_key'] || c[provider + 'Key'];
+            if (apiKey && apiKey.trim()) {
+              $('modelTypeSelect').value = provider;
+              break;
+            }
+          }
+        }
+        
         $('outputDir').value = c.default_output_dir || c.outputDir || '';
+        $('styleDir').value = c.style_dir || defaultRefDir;
+        $('articleFetchDir').value = c.article_fetch_dir || c.style_dir || defaultRefDir;
         $('articleEditor').value = c.article_editor || '';
         $('articleReviewer').value = c.article_reviewer || '';
+      }
+      
+      // Show the configuration panel for the selected model
+      showModelConfig();
+    }
+
+    function loadArticleFetcherConfig() {
+      const cfg = JSON.parse(localStorage.getItem('cfg') || '{}');
+      if (!$('articleOutputDir').value) {
+        $('articleOutputDir').value = cfg.article_fetch_dir || cfg.style_dir || cfg.default_output_dir || 'reference';
+      }
+    }
+
+    async function fetchArticle() {
+      const url = $('articleUrl').value.trim();
+
+      if (!url) {
+        toast('请输入文章链接', 'error');
+        return;
+      }
+
+      if (!url.includes('mp.weixin.qq.com')) {
+        toast('请输入有效的微信公众号文章链接', 'error');
+        return;
+      }
+
+      const cfg = JSON.parse(localStorage.getItem('cfg') || '{}');
+      const fetchDir = $('articleOutputDir').value.trim() || cfg.article_fetch_dir || cfg.style_dir || cfg.default_output_dir || 'reference';
+      if (!fetchDir) {
+        toast('请先在设置中配置文章抓取保存目录', 'error');
+        return;
+      }
+
+      $('fetchArticleBtn').disabled = true;
+      $('fetchArticleText').textContent = '抓取中...';
+      $('fetchResult').innerHTML = '<div class="empty">正在抓取文章...</div>';
+
+      try {
+        const r = await api.fetchArticle(url, fetchDir);
+        if (r.success) {
+          $('fetchResult').innerHTML = `
+            <div style="padding: 16px; background: var(--bg-secondary); border-radius: 8px;">
+              <div style="color: #16a34a; font-weight: 500; margin-bottom: 8px;">✅ 抓取成功</div>
+              <div style="font-size: 13px; color: var(--text-secondary);">
+                <div>标题: ${escapeHtml(r.title || '未知')}</div>
+                <div>作者: ${escapeHtml(r.author || '未知')}</div>
+                <div style="margin-top: 8px;">
+                  <button class="btn btn-secondary btn-sm" onclick="openFile('${r.path}')">打开文件夹</button>
+                </div>
+              </div>
+            </div>
+          `;
+          toast('文章抓取成功');
+        } else {
+          $('fetchResult').innerHTML = `<div class="error-block"><span class="error-icon">❌</span><span class="error-msg">${r.error}</span></div>`;
+          toast('抓取失败: ' + r.error, 'error');
+        }
+      } catch (e) {
+        $('fetchResult').innerHTML = `<div class="error-block"><span class="error-icon">❌</span><span class="error-msg">${e.message}</span></div>`;
+        toast('抓取失败', 'error');
+      } finally {
+        $('fetchArticleBtn').disabled = false;
+        $('fetchArticleText').textContent = '抓取文章';
       }
     }
 
@@ -2275,22 +2697,28 @@
       const cfg = {
         tavily_api_key: $('tavilyKey').value,
         minimax_api_key: $('minimaxKey').value,
+        minimax_model: $('minimaxModel').value,
+        deepseek_api_key: $('deepseekKey').value,
+        deepseek_base_url: $('deepseekBaseUrl').value,
+        deepseek_model: $('deepseekModel').value,
+        openai_api_key: $('openaiKey').value,
+        openai_base_url: $('openaiBaseUrl').value,
+        openai_model: $('openaiModel').value,
+        custom_api_key: $('customApiKey').value,
+        custom_base_url: $('customBaseUrl').value,
+        custom_model: $('customModel').value,
+        default_model_provider: $('defaultModelSelect').value,
         default_output_dir: $('outputDir').value,
+        style_dir: $('styleDir').value,
+        article_fetch_dir: $('articleFetchDir').value,
         article_editor: $('articleEditor').value,
         article_reviewer: $('articleReviewer').value
       };
       try {
         const r = await api.saveConfig(cfg);
         if (r.success) {
-          localStorage.setItem('cfg', JSON.stringify({
-            tavily_api_key: cfg.tavily_api_key,
-            minimax_api_key: cfg.minimax_api_key,
-            default_output_dir: cfg.default_output_dir,
-            article_editor: cfg.article_editor,
-            article_reviewer: cfg.article_reviewer
-          }));
+          localStorage.setItem('cfg', JSON.stringify(cfg));
           state.outputDir = cfg.default_output_dir;
-          $('settingsModal').classList.remove('active');
           toast('配置已保存');
         }
       } catch (e) { toast('保存失败: ' + e.message, 'error'); }
@@ -2307,6 +2735,8 @@
       if (navItem) navItem.classList.add('active');
 
       if (pageId === 'projects') { scanLibrary(); showProjectsList(); }
+      if (pageId === 'settings') { loadConfig(); }
+      if (pageId === 'article-fetcher') { loadArticleFetcherConfig(); }
       if (pageId === 'logs') renderLogs();
     }
 
@@ -2323,16 +2753,26 @@
       const contentFile = files.find(f => f.type === 'content');
 
       detail.innerHTML = `
-        <div class="project-breadcrumb">
-          <button class="btn btn-secondary btn-sm" onclick="showProjectsList()">← 返回项目列表</button>
-          <span class="breadcrumb-title">${project.name}</span>
+        <div class="notion-block">
+          <div class="notion-block-header">
+            <span class="notion-block-icon">←</span>
+            <button class="btn btn-secondary btn-sm" onclick="showProjectsList()">返回项目列表</button>
+            <span style="margin-left: 8px; font-weight: 500;">${project.name}</span>
+          </div>
         </div>
-        <div class="file-list">
-          ${researchFile ? `<div class="file-row" onclick="openFile('${researchFile.path}')"><span>📄 研究资料</span><span>${researchFile.name}</span></div>` : ''}
-          ${articleFile ? `<div class="file-row" onclick="openFile('${articleFile.path}')"><span>📝 文章</span><span>${articleFile.name}</span></div>` : ''}
-          ${wordFile ? `<div class="file-row" onclick="openFile('${wordFile.path}')"><span>📄 Word</span><span>${wordFile.name}</span></div>` : ''}
-          ${contentFile ? `<div class="file-row" onclick="openFile('${contentFile.path}')"><span>📋 内容</span><span>${contentFile.name}</span></div>` : ''}
-          ${videoFile && contentFile ? `<div class="file-row" onclick="openVideoModalFromProject('${videoFile.path}', '${contentFile.path}', '${currentProject.path.replace(/\\/g, '\\\\')}')"><span>🎬 视频</span><span>${videoFile.name}</span></div>` : ''}
+        
+        <div class="notion-block">
+          <div class="notion-block-header">
+            <span class="notion-block-icon">📁</span>
+            <span class="notion-block-title">项目文件</span>
+          </div>
+          <div class="file-list">
+            ${researchFile ? `<div class="file-row" onclick="openFile('${researchFile.path}')"><span>📄 研究资料</span><span>${researchFile.name}</span></div>` : ''}
+            ${articleFile ? `<div class="file-row" onclick="openFile('${articleFile.path}')"><span>📝 文章</span><span>${articleFile.name}</span></div>` : ''}
+            ${wordFile ? `<div class="file-row" onclick="openFile('${wordFile.path}')"><span>📄 Word</span><span>${wordFile.name}</span></div>` : ''}
+            ${contentFile ? `<div class="file-row" onclick="openFile('${contentFile.path}')"><span>📋 内容</span><span>${contentFile.name}</span></div>` : ''}
+            ${videoFile && contentFile ? `<div class="file-row" onclick="openVideoModalFromProject('${videoFile.path}', '${contentFile.path}', '${currentProject.path.replace(/\\/g, '\\\\')}')"><span>🎬 视频</span><span>${videoFile.name}</span></div>` : ''}
+          </div>
         </div>
       `;
     }
@@ -2340,18 +2780,9 @@
     function showProjectsList() {
       currentProject = null;
       const detail = $('projectDetail');
-      const view = state.projectView || 'list';
       detail.innerHTML = `
-        <div class="view-toggle">
-          <button class="toggle-btn ${view === 'list' ? 'active' : ''}" id="listViewBtn" onclick="setProjectView('list')" title="列表视图">
-            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
-          </button>
-          <button class="toggle-btn ${view === 'grid' ? 'active' : ''}" id="gridViewBtn" onclick="setProjectView('grid')" title="画廊视图">
-            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
-          </button>
-        </div>
         <div id="projectsGrid">
-          ${(window.libraryData || []).length ? '' : '<div class="empty">暂无项目（请先运行创作流程）</div>'}
+          <div class="empty">暂无项目（请先运行创作流程）</div>
         </div>
       `;
       loadProjects();
@@ -2410,10 +2841,7 @@
 
     function loadProjects() {
       const projects = window.libraryData || [];
-      const view = state.projectView || 'list';
       const grid = $('projectsGrid');
-      grid.classList.remove('list-view', 'grid-view');
-      grid.classList.add(view + '-view');
 
       if (!projects.length) {
         grid.innerHTML = '<div class="empty">暂无项目（请先运行创作流程）</div>';
@@ -2424,21 +2852,6 @@
         const wordFile = files.find(f => f.type === 'word');
         const videoFile = files.find(f => f.type === 'video');
         const contentFile = files.find(f => f.type === 'content');
-        const imageFile = files.find(f => f.type === 'image');
-        if (view === 'grid') {
-          return `
-            <div class="project-card" onclick="showProjectDetail(window.libraryData.find(proj => proj.path === '${p.path.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'))">
-              ${imageFile ? `<img src="file:///${imageFile.path.replace(/\\\\/g, '/')}" alt="${p.name}" class="project-thumb">` : '<div class="project-icon">📁</div>'}
-              <div class="project-info">
-                <div class="project-name">${p.name}</div>
-                <div class="project-files">
-                  ${wordFile ? `<span class="file-tag">📄</span>` : ''}
-                  ${videoFile ? `<span class="file-tag">🎬</span>` : ''}
-                </div>
-              </div>
-            </div>
-          `;
-        }
         return `
           <div class="project-card" onclick="showProjectDetail(window.libraryData.find(proj => proj.path === '${p.path.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'))">
             <div class="project-icon">📁</div>
@@ -2453,16 +2866,6 @@
           </div>
         `;
       }).join('');
-    }
-
-    function setProjectView(view) {
-      state.projectView = view;
-      const grid = $('projectsGrid');
-      grid.classList.remove('list-view', 'grid-view');
-      grid.classList.add(view + '-view');
-      $('listViewBtn').classList.toggle('active', view === 'list');
-      $('gridViewBtn').classList.toggle('active', view === 'grid');
-      loadProjects();
     }
 
     async function scanLibrary() {
@@ -2508,34 +2911,69 @@
       }
     });
 
-    document.querySelectorAll('.step').forEach(el => {
+    document.querySelectorAll('.notion-step').forEach(el => {
       el.addEventListener('click', () => {
         const step = parseInt(el.dataset.step);
         if (STEPS[step] === 'success') {
-          document.querySelectorAll('.step').forEach(e => e.classList.remove('active'));
+          document.querySelectorAll('.notion-step').forEach(e => e.classList.remove('active'));
           el.classList.add('active');
         }
       });
     });
 
-    $('openSettings').addEventListener('click', () => { loadConfig(); $('settingsModal').classList.add('active'); });
-    $('closeSettings').addEventListener('click', () => $('settingsModal').classList.remove('active'));
-    $('cancelSettings').addEventListener('click', () => $('settingsModal').classList.remove('active'));
     $('saveSettings').addEventListener('click', saveConfig);
-    $('settingsModal').addEventListener('click', e => { if (e.target === $('settingsModal')) $('settingsModal').classList.remove('active'); });
 
     $('videoModal').addEventListener('wheel', e => e.stopPropagation(), { passive: false });
-    $('settingsModal').addEventListener('wheel', e => e.stopPropagation(), { passive: false });
 
     $('selectDirBtn').addEventListener('click', async () => {
       try {
-        const dirHandle = await window.showDirectoryPicker();
-        $('outputDir').value = dirHandle.name;
-        state.outputDirHandle = dirHandle;
-      } catch (e) {
-        if (e.name !== 'AbortError') {
-          console.log('Directory picker not supported or cancelled');
+        const r = await api.selectDirectory();
+        if (r.success) {
+          $('outputDir').value = r.path;
+        } else if (r.error !== '用户取消选择') {
+          toast(r.error, 'error');
         }
+      } catch (e) {
+        toast('无法打开文件夹选择器: ' + e.message, 'error');
+      }
+    });
+
+    $('selectStyleDirBtn').addEventListener('click', async () => {
+      try {
+        const r = await api.selectDirectory();
+        if (r.success) {
+          $('styleDir').value = r.path;
+        } else if (r.error !== '用户取消选择') {
+          toast(r.error, 'error');
+        }
+      } catch (e) {
+        toast('无法打开文件夹选择器: ' + e.message, 'error');
+      }
+    });
+
+    $('selectArticleFetchDirBtn').addEventListener('click', async () => {
+      try {
+        const r = await api.selectDirectory();
+        if (r.success) {
+          $('articleFetchDir').value = r.path;
+        } else if (r.error !== '用户取消选择') {
+          toast(r.error, 'error');
+        }
+      } catch (e) {
+        toast('无法打开文件夹选择器: ' + e.message, 'error');
+      }
+    });
+
+    $('selectArticleDirBtn').addEventListener('click', async () => {
+      try {
+        const r = await api.selectDirectory();
+        if (r.success) {
+          $('articleOutputDir').value = r.path;
+        } else if (r.error !== '用户取消选择') {
+          toast(r.error, 'error');
+        }
+      } catch (e) {
+        toast('无法打开文件夹选择器: ' + e.message, 'error');
       }
     });
 

@@ -71,6 +71,49 @@ def list_images_safe(images_dir):
 
     return []
 
+def load_style_guide(output_dir, style_topic=None):
+    """Load style guide from project reference folder or fallback locations.
+    
+    Priority:
+    1. reference/{style_topic}/style.md (topic-specific style, both output_dir and project root)
+    2. reference/style-guide.md (project default)
+    3. Fallback paths
+    """
+    skill_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_reference_dir = os.path.join(output_dir, 'reference')
+    
+    if style_topic:
+        topic_style_locations = [
+            os.path.join(project_reference_dir, style_topic, 'style.md'),
+            os.path.join(skill_dir, 'reference', style_topic, 'style.md'),
+        ]
+        for topic_style_path in topic_style_locations:
+            if os.path.exists(topic_style_path):
+                print(f"  Using topic style: {topic_style_path}")
+                with open(topic_style_path, 'r', encoding='utf-8') as f:
+                    return f.read()
+    
+    style_guide_path = os.path.join(project_reference_dir, 'style-guide.md')
+    if os.path.exists(style_guide_path):
+        print(f"  Using project style: {style_guide_path}")
+        with open(style_guide_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    
+    fallback_paths = [
+        os.path.join(skill_dir, "reference", "style-guide.md"),
+        os.path.join(skill_dir, "article-writer", "references", "style-guide.md"),
+        os.path.join(project_reference_dir, "..", "..", "article-writer", "references", "style-guide.md"),
+        os.path.join(os.path.dirname(output_dir), "article-writer", "references", "style-guide.md"),
+    ]
+    
+    for path in fallback_paths:
+        if os.path.exists(path):
+            print(f"  Using fallback style: {path}")
+            with open(path, 'r', encoding='utf-8') as f:
+                return f.read()
+    
+    raise FileNotFoundError(f"style-guide.md not found in any location")
+
 def step1_dispatch(topic, output_dir, search_type='news', days=None, num_results=None):
 
     """Dispatch to the appropriate Step 1 search function based on search_type."""
@@ -378,7 +421,7 @@ def step1_search_product(topic, output_dir, api_key=None):
     return True, research_file, all_results
 
 
-def step2_generate_article(research_file, output_dir):
+def step2_generate_article(research_file, output_dir, style_topic=None):
 
     """Step 2: Generate article using MiniMax LLM (article-writer skill)."""
 
@@ -401,20 +444,9 @@ def step2_generate_article(research_file, output_dir):
     print(f"  Output article: {article_file}")
 
     with open(research_file, "r", encoding="utf-8") as f:
-
         research_content = f.read()
 
-    skill_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    
-    style_guide_path = os.path.join(skill_dir, "reference", "style-guide.md")
-    if not os.path.exists(style_guide_path):
-        style_guide_path = os.path.join(skill_dir, "article-writer", "references", "style-guide.md")
-    if not os.path.exists(style_guide_path):
-        raise FileNotFoundError(f"style-guide.md not found: {style_guide_path}")
-
-    with open(style_guide_path, "r", encoding="utf-8") as f:
-
-        style_guide = f.read()
+    style_guide = load_style_guide(output_dir, style_topic)
 
     system_prompt = (
 
@@ -1459,7 +1491,7 @@ def find_existing_folder(topic, base_dir):
 
     return None
 
-def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humanize_aggressive=False, type_=None, days=None, num_results=None):
+def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humanize_aggressive=False, type_=None, days=None, num_results=None, style_topic=None):
 
     """
 
@@ -1566,7 +1598,7 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
 
     if 2 not in skip_steps:
 
-        success, article_file = step2_generate_article(research_file, output_dir)
+        success, article_file = step2_generate_article(research_file, output_dir, style_topic)
         content = read_file_safe(article_file)
         results['steps'][2] = {'success': success, 'file': article_file, 'content': content}
 
@@ -1828,6 +1860,8 @@ def main():
 
     parser.add_argument('--json', action='store_true', help='Output results as JSON')
 
+    parser.add_argument('--style-topic', default=None, help='Topic name for loading topic-specific style from reference/{topic}/style.md')
+
     args = parser.parse_args()
 
     
@@ -1874,7 +1908,7 @@ def main():
 
     
 
-    results = run_pipeline(args.topic, skip_steps=args.skip, output_dir=args.output, humanize=args.humanize, humanize_aggressive=args.humanize_aggressive, type_=args.type, days=args.days, num_results=args.num_results)
+    results = run_pipeline(args.topic, skip_steps=args.skip, output_dir=args.output, humanize=args.humanize, humanize_aggressive=args.humanize_aggressive, type_=args.type, days=args.days, num_results=args.num_results, style_topic=args.style_topic)
 
     output_dir = results.get('output_dir', '')
 

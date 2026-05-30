@@ -23,8 +23,7 @@ Handles both text content and image position analysis.
 
 
 import sys
-
-
+from pathlib import Path
 
 import os
 
@@ -1037,21 +1036,16 @@ def main():
 
 
 
-    parser.add_argument('content_file', nargs='?', default=None,
-
-
-
+    parser.add_argument('--content-file', dest='content_file', default=None,
                         help='Path to content file (HTML/TXT). If omitted, reads from stdin.')
 
 
 
     parser.add_argument('--images', dest='images_json', default=None,
-
-
-
                         help='Path to images JSON file')
-
-
+    
+    parser.add_argument('--output-dir', '-o', dest='output_dir', default=None,
+                        help='Output directory for reference files. Default: skill references folder')
 
     args = parser.parse_args()
 
@@ -1126,20 +1120,19 @@ def main():
 
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
-
-
-
     skill_dir = os.path.dirname(script_dir)
-
-
-
-    base_dir = os.path.join(skill_dir, 'references', 'articles')
-
-
-
-    topic_dir = os.path.join(base_dir, topic)
-
-
+    project_root = os.path.join(skill_dir, '..')
+    default_reference_dir = os.path.join(project_root, 'reference')
+    
+    if args.output_dir:
+        output_path = Path(args.output_dir).resolve()
+        if str(output_path).endswith('reference') or str(output_path).endswith('reference' + os.sep):
+            project_reference_dir = str(output_path)
+        else:
+            project_reference_dir = os.path.join(args.output_dir, 'reference')
+        topic_dir = os.path.join(project_reference_dir, topic)
+    else:
+        topic_dir = os.path.join(default_reference_dir, topic)
 
     os.makedirs(topic_dir, exist_ok=True)
 

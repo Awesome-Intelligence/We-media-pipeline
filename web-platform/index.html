@@ -476,36 +476,45 @@
     /* Article type tabs - Notion style */
     .article-type-tabs {
       display: flex;
-      gap: 4px;
-      margin-bottom: 16px;
-      padding: 4px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      width: fit-content;
+      gap: 8px;
+      margin-bottom: 24px;
     }
 
     .article-type-tab {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 10px 16px;
-      border-radius: 4px;
+      gap: 8px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.15s ease;
       font-size: 14px;
       color: var(--text-secondary);
-      background: transparent;
+      background: var(--bg-secondary);
     }
 
     .article-type-tab:hover {
-      background: var(--bg-secondary);
+      background: var(--bg-hover);
       color: var(--text);
     }
 
     .article-type-tab.active {
-      background: var(--text);
-      color: var(--bg);
+      background: var(--bg);
+      color: var(--text);
+      border-color: var(--border-focus, #018able);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .article-type-tab.custom-topic {
+      border-style: dashed;
+      border-color: var(--border-focus, #018able);
+      background: rgba(1, 138, 190, 0.04);
+    }
+
+    .article-type-tab.custom-topic.active {
+      border-style: solid;
+      background: rgba(1, 138, 190, 0.08);
     }
 
     .article-type-icon {
@@ -516,10 +525,26 @@
       font-weight: 500;
     }
 
-    .article-type-hint {
-      font-size: 11px;
-      opacity: 0.6;
-      margin-left: 4px;
+    /* Topic overview cards */
+    .topic-overview-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .topic-overview-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .topic-overview-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
     }
 
     /* Creator block - modern input area */
@@ -1478,6 +1503,19 @@
     .log-message {
       color: #e0e0e0;
     }
+    
+    /* 下拉菜单样式 */
+    .dropdown-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    
+    .dropdown-item:hover {
+      background: var(--bg-hover);
+    }
 
     /* Responsive */
     @media (max-width: 900px) {
@@ -1526,7 +1564,7 @@
 
         <div class="nav-item" data-page="article-fetcher">
           <div class="nav-icon">🔍</div>
-          <span>文章抓取</span>
+          <span>风格学习</span>
           <svg class="nav-arrow" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
         </div>
 
@@ -1558,23 +1596,25 @@
           </div>
 
           <!-- Article type tabs - Notion style -->
-          <div class="article-type-tabs">
-            <div class="article-type-tab active" data-type="news">
+          <div class="article-type-tabs" id="workspaceTopicTabs">
+            <div class="article-type-tab active" data-type="新闻资讯">
               <span class="article-type-icon">📰</span>
               <span class="article-type-label">新闻资讯</span>
-              <span class="article-type-hint">追踪热点</span>
             </div>
-            <div class="article-type-tab" data-type="tutorial">
+            <div class="article-type-tab" data-type="使用教程">
               <span class="article-type-icon">📚</span>
-              <span class="article-type-label">教程指南</span>
-              <span class="article-type-hint">学习教程</span>
+              <span class="article-type-label">使用教程</span>
             </div>
-            <div class="article-type-tab" data-type="product">
+            <div class="article-type-tab" data-type="产品介绍">
               <span class="article-type-icon">🛒</span>
-              <span class="article-type-label">产品评测</span>
-              <span class="article-type-hint">对比测评</span>
+              <span class="article-type-label">产品介绍</span>
             </div>
+            <button class="article-type-tab" id="workspaceMoreBtn" onclick="showWorkspaceMoreTopics(event)">
+              <span>⋮</span>
+              <span class="article-type-label">更多</span>
+            </button>
           </div>
+          <div id="workspaceMoreDropdown" style="display: none; position: fixed; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; min-width: 160px; padding: 8px 0;"></div>
 
           <!-- Input block - Notion style -->
           <div class="creator-block">
@@ -1827,20 +1867,12 @@
               <p class="form-hint">生成文件将保存在此目录</p>
             </div>
             <div class="form-group">
-              <label class="form-label">风格文件目录</label>
+              <label class="form-label">文章保存目录</label>
               <div class="dir-input-row">
-                <input type="text" class="form-input" id="styleDir" placeholder="点击按钮选择风格文件夹">
-                <button class="btn btn-secondary" id="selectStyleDirBtn">选择文件夹</button>
-              </div>
-              <p class="form-hint">包含 style-guide.md 等风格参考文件</p>
-            </div>
-            <div class="form-group">
-              <label class="form-label">文章抓取保存目录</label>
-              <div class="dir-input-row">
-                <input type="text" class="form-input" id="articleFetchDir" placeholder="默认与风格文件目录相同">
+                <input type="text" class="form-input" id="articleFetchDir" placeholder="默认保存到 抓取文章 文件夹">
                 <button class="btn btn-secondary" id="selectArticleFetchDirBtn">选择文件夹</button>
               </div>
-              <p class="form-hint">抓取的文章保存在此目录（建议与风格文件目录相同）</p>
+              <p class="form-hint">抓取的文章保存在此目录</p>
             </div>
           </div>
           
@@ -1863,15 +1895,67 @@
           </div>
         </div>
 
-        <!-- 文章抓取页面 -->
+        <!-- 风格学习页面 -->
         <div class="page-view" id="view-article-fetcher" style="display: none;">
           <div class="page-header">
             <div class="page-emoji">🔍</div>
-            <h1 class="page-title">文章抓取</h1>
-            <p class="page-subtitle">抓取微信公众号文章进行分析和学习（保存在设置的风格文件目录）</p>
+            <h1 class="page-title">风格学习</h1>
+            <p class="page-subtitle">抓取微信公众号文章分析风格并保存到主题文件夹</p>
           </div>
           
-          <div class="notion-block">
+          <!-- Topic tabs -->
+          <div class="article-type-tabs" id="fetchTopicTabs">
+            <div class="article-type-tab active" data-type="新闻资讯">
+              <span>📰</span>
+              <span class="article-type-label">新闻资讯</span>
+            </div>
+            <div class="article-type-tab" data-type="使用教程">
+              <span>📚</span>
+              <span class="article-type-label">使用教程</span>
+            </div>
+            <div class="article-type-tab" data-type="产品介绍">
+              <span>🛒</span>
+              <span class="article-type-label">产品介绍</span>
+            </div>
+            <button class="article-type-tab" id="moreTopicBtn" onclick="showMoreTopics()">
+              <span>⋮</span>
+              <span class="article-type-label">更多</span>
+            </button>
+          </div>
+          <div id="moreTopicDropdown" style="display: none; position: absolute; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; min-width: 160px; padding: 8px 0;"></div>
+          
+          <div class="notion-block" id="topicOverview" style="margin-top: 20px; display: none;">
+            <div class="notion-block-header">
+              <span class="notion-block-icon">📊</span>
+              <span class="notion-block-title">学习概览</span>
+              <span id="topicOverviewName" style="font-weight: 500; color: var(--border-focus, #018able); margin-left: 8px;"></span>
+            </div>
+            <div class="topic-overview-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 12px;">
+              <div class="topic-overview-card">
+                <div class="topic-overview-number" id="topicArticleCount">-</div>
+                <div class="topic-overview-label">已学习文章</div>
+              </div>
+              <div class="topic-overview-card">
+                <div class="topic-overview-number" id="topicImageCount">-</div>
+                <div class="topic-overview-label">配图素材</div>
+              </div>
+              <div class="topic-overview-card">
+                <div class="topic-overview-number" id="topicStyleSize">-</div>
+                <div class="topic-overview-label">风格文件大小</div>
+              </div>
+              <div class="topic-overview-card">
+                <div class="topic-overview-number" id="topicUpdatedAt">-</div>
+                <div class="topic-overview-label">最近更新</div>
+              </div>
+            </div>
+            <div id="topicOverviewEmpty" style="display: none; padding: 24px; text-align: center; color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+              <div style="font-size: 32px; margin-bottom: 8px;">📭</div>
+              <div>该主题尚未学习任何文章</div>
+              <div style="font-size: 12px; margin-top: 4px; opacity: 0.7;">在下方输入文章链接开始学习</div>
+            </div>
+          </div>
+          
+          <div class="notion-block" style="margin-top: 20px;">
             <div class="notion-block-header">
               <span class="notion-block-icon">📥</span>
               <span class="notion-block-title">抓取公众号文章</span>
@@ -1881,16 +1965,9 @@
               <input type="text" class="form-input" id="articleUrl" placeholder="输入微信公众号文章链接">
               <p class="form-hint">支持公众号文章链接</p>
             </div>
-            <div class="form-group">
-              <label class="form-label">保存目录（默认与风格文件目录相同）</label>
-              <div class="dir-input-row">
-                <input type="text" class="form-input" id="articleOutputDir" placeholder="默认使用风格文件目录">
-                <button class="btn btn-secondary" id="selectArticleDirBtn">选择文件夹</button>
-              </div>
-            </div>
             <div style="margin-top: 16px; display: flex; gap: 12px;">
               <button class="btn btn-primary" id="fetchArticleBtn" onclick="fetchArticle()">
-                <span id="fetchArticleText">抓取文章</span>
+                <span id="fetchArticleText">抓取并学习</span>
               </button>
             </div>
             <div id="fetchResult" style="margin-top: 20px;"></div>
@@ -2062,75 +2139,84 @@
     }
 
     class ApiClient {
-      constructor(base) { this.base = base; }
-      async req(endpoint, opts = {}) {
-        try {
-          const res = await fetch(this.base + endpoint, {
-            ...opts,
-            headers: { 'Content-Type': 'application/json', ...opts.headers },
-            body: opts.body ? JSON.stringify(opts.body) : undefined
-          });
-          if (!res.ok) {
-            const e = await res.json().catch(() => ({ error: 'Request failed' }));
-            throw new Error(e.error || `HTTP ${res.status}`);
-          }
-          return await res.json();
-        } catch (e) {
-          if (e.name === 'TypeError') throw new Error('无法连接服务器，请确保后端已启动');
-          throw e;
+        constructor(base) { this.base = base; }
+        async req(endpoint, opts = {}) {
+            try {
+                const res = await fetch(this.base + endpoint, {
+                    ...opts,
+                    headers: { 'Content-Type': 'application/json', ...opts.headers },
+                    body: opts.body ? JSON.stringify(opts.body) : undefined
+                });
+                if (!res.ok) {
+                    const e = await res.json().catch(() => ({ error: 'Request failed' }));
+                    throw new Error(e.error || `HTTP ${res.status}`);
+                }
+                return await res.json();
+            } catch (e) {
+                if (e.name === 'TypeError') throw new Error('无法连接服务器，请确保后端已启动');
+                throw e;
+            }
         }
-      }
-      async getConfig() { return this.req('/config'); }
-      async saveConfig(cfg) { return this.req('/config', { method: 'POST', body: cfg }); }
-      async searchNews(q, topic, days, n = 10, articleType = 'news', outputDir = '') {
-        return this.req('/news/search', { method: 'POST', body: { query: q, topic, days, num: n, type: articleType, output_dir: outputDir } });
-      }
-      async testModel(data) {
-        return this.req('/model/test', { method: 'POST', body: data });
-      }
-      async generateArticle(researchFile, modelProvider = 'minimax', modelName = null, baseUrl = null) {
-        return this.req('/article/generate', { method: 'POST', body: { research_file: researchFile, model_provider: modelProvider, model_name: modelName, base_url: baseUrl } });
-      }
-      async searchImages(q, n = 6, outputDir = '') {
-        return this.req('/images/search', { method: 'POST', body: { query: q, num: n, output_dir: outputDir } });
-      }
-      async exportWord(articleFile, outputDir, imagesDir = '') {
-        return this.req('/word/export', { method: 'POST', body: { article_file: articleFile, output_dir: outputDir, images_dir: imagesDir } });
-      }
-      async generateContent(articleFile, outputDir, modelProvider = null, modelName = null, baseUrl = null) {
-        const body = { article_file: articleFile, output_dir: outputDir };
-        if (modelProvider) body.model_provider = modelProvider;
-        if (modelName) body.model_name = modelName;
-        if (baseUrl) body.base_url = baseUrl;
-        return this.req('/content/generate', { method: 'POST', body });
-      }
-      async generateVideo(contentJsonFile, imagesDir, outputDir) {
-        return this.req('/video/generate', { method: 'POST', body: { content_json_file: contentJsonFile, images_dir: imagesDir, output_dir: outputDir } });
-      }
-      async scanLibrary(outputDir = '') {
-        return this.req('/library/scan', { method: 'POST', body: { output_dir: outputDir } });
-      }
-      async openFile(path) {
-        return this.req('/file/open', { method: 'POST', body: { path } });
-      }
-      async selectDirectory() {
-        return this.req('/dialog/select-directory', { method: 'POST' });
-      }
-      async addLog(time, level, message) {
-        return this.req('/log/add', { method: 'POST', body: { time, level, message } });
-      }
-      async listLogs() {
-        return this.req('/log/list', { method: 'GET' });
-      }
-      async clearLogs() {
-        return this.req('/log/clear', { method: 'POST' });
-      }
-      async readFile(path) {
-        return this.req('/file/read', { method: 'POST', body: { path } });
-      }
-      async fetchArticle(url, outputDir) {
-        return this.req('/article/fetch', { method: 'POST', body: { url, output_dir: outputDir } });
-      }
+        
+        async listTopics() {
+            return this.req('/topics/list');
+        }
+
+        async getTopicInfo(topic) {
+            return this.req('/topic/info?topic=' + encodeURIComponent(topic));
+        }
+        
+        async getConfig() { return this.req('/config'); }
+        async saveConfig(cfg) { return this.req('/config', { method: 'POST', body: cfg }); }
+        async searchNews(q, topic, days, n = 10, articleType = 'news', outputDir = '') {
+          return this.req('/news/search', { method: 'POST', body: { query: q, topic, days, num: n, type: articleType, output_dir: outputDir } });
+        }
+        async testModel(data) {
+          return this.req('/model/test', { method: 'POST', body: data });
+        }
+        async generateArticle(researchFile, modelProvider = 'minimax', modelName = null, baseUrl = null, articleType = null) {
+            return this.req('/article/generate', { method: 'POST', body: { research_file: researchFile, model_provider: modelProvider, model_name: modelName, base_url: baseUrl, article_type: articleType } });
+        }
+        async searchImages(q, n = 6, outputDir = '') {
+          return this.req('/images/search', { method: 'POST', body: { query: q, num: n, output_dir: outputDir } });
+        }
+        async exportWord(articleFile, outputDir, imagesDir = '') {
+          return this.req('/word/export', { method: 'POST', body: { article_file: articleFile, output_dir: outputDir, images_dir: imagesDir } });
+        }
+        async generateContent(articleFile, outputDir, modelProvider = null, modelName = null, baseUrl = null) {
+          const body = { article_file: articleFile, output_dir: outputDir };
+          if (modelProvider) body.model_provider = modelProvider;
+          if (modelName) body.model_name = modelName;
+          if (baseUrl) body.base_url = baseUrl;
+          return this.req('/content/generate', { method: 'POST', body });
+        }
+        async generateVideo(contentJsonFile, imagesDir, outputDir) {
+          return this.req('/video/generate', { method: 'POST', body: { content_json_file: contentJsonFile, images_dir: imagesDir, output_dir: outputDir } });
+        }
+        async scanLibrary(outputDir = '') {
+          return this.req('/library/scan', { method: 'POST', body: { output_dir: outputDir } });
+        }
+        async openFile(path) {
+          return this.req('/file/open', { method: 'POST', body: { path } });
+        }
+        async selectDirectory() {
+          return this.req('/dialog/select-directory', { method: 'POST' });
+        }
+        async addLog(time, level, message) {
+          return this.req('/log/add', { method: 'POST', body: { time, level, message } });
+        }
+        async listLogs() {
+          return this.req('/log/list', { method: 'GET' });
+        }
+        async clearLogs() {
+          return this.req('/log/clear', { method: 'POST' });
+        }
+        async readFile(path) {
+          return this.req('/file/read', { method: 'POST', body: { path } });
+        }
+        async fetchArticle(url, outputDir, topic = '') {
+          return this.req('/article/fetch', { method: 'POST', body: { url, output_dir: outputDir, topic } });
+        }
     }
 
     const api = new ApiClient(API_BASE);
@@ -2180,7 +2266,8 @@
     async function stepNews() {
       const topic = $('topicInput').value.trim();
       const days = parseInt($('daysSelect').value);
-      const articleType = document.querySelector('.article-type-tab.active').dataset.type;
+      const activeTab = document.querySelector('#workspaceTopicTabs .article-type-tab.active');
+      const articleType = activeTab ? activeTab.dataset.type : '新闻资讯';
       if (!topic) throw new Error('请输入创作主题');
       state.topic = topic;
       state.articleType = articleType;
@@ -2200,11 +2287,13 @@
         state.baseUrl = baseUrlInput.value || null;
       }
       
-      const typeLabels = { news: '新闻', tutorial: '教程', product: '产品' };
-      toast(`正在搜索${typeLabels[articleType]}...`);
-      logger.info(`搜索${typeLabels[articleType]}: ${topic}, 时间范围: 最近${days}天`);
+      const typeLabels = { '新闻资讯': '新闻', '使用教程': '教程', '产品介绍': '产品' };
+      const typeKeys = { '新闻资讯': 'news', '使用教程': 'tutorial', '产品介绍': 'product' };
+      const searchType = typeKeys[articleType] || 'news';
+      toast(`正在搜索${typeLabels[articleType] || '相关内容'}...`);
+      logger.info(`搜索${typeLabels[articleType] || '相关内容'}: ${topic}, 时间范围: 最近${days}天`);
       try {
-        const r = await api.searchNews(topic, topic, days, 10, articleType);
+        const r = await api.searchNews(topic, topic, days, 10, searchType);
         if (!r.success) {
           throw new Error(r.error || '搜索失败');
         }
@@ -2248,7 +2337,7 @@
       toast('正在生成文章...');
       logger.info('开始生成文章（调用 article-writer 技能）...');
       try {
-        const r = await api.generateArticle(state.researchFile, state.modelProvider, state.modelName, state.baseUrl);
+        const r = await api.generateArticle(state.researchFile, state.modelProvider, state.modelName, state.baseUrl, state.articleType);
         state.article = r.article || '';
         state.articleFile = r.file || '';
         if (!state.article) {
@@ -2727,7 +2816,6 @@
     }
 
     async function loadConfig() {
-      const defaultRefDir = 'reference';
       try {
         const r = await api.getConfig();
         if (r.success && r.config) {
@@ -2764,8 +2852,7 @@
           }
           
           $('outputDir').value = r.config.default_output_dir || '';
-          $('styleDir').value = r.config.style_dir || defaultRefDir;
-          $('articleFetchDir').value = r.config.article_fetch_dir || r.config.style_dir || defaultRefDir;
+          $('articleFetchDir').value = r.config.article_fetch_dir || '';
           $('articleEditor').value = r.config.article_editor || '';
           $('articleReviewer').value = r.config.article_reviewer || '';
           state.outputDir = r.config.default_output_dir || '';
@@ -2802,8 +2889,7 @@
         }
         
         $('outputDir').value = c.default_output_dir || c.outputDir || '';
-        $('styleDir').value = c.style_dir || defaultRefDir;
-        $('articleFetchDir').value = c.article_fetch_dir || c.style_dir || defaultRefDir;
+        $('articleFetchDir').value = c.article_fetch_dir || '';
         $('articleEditor').value = c.article_editor || '';
         $('articleReviewer').value = c.article_reviewer || '';
       }
@@ -2812,11 +2898,23 @@
       showModelConfig();
     }
 
-    function loadArticleFetcherConfig() {
-      const cfg = JSON.parse(localStorage.getItem('cfg') || '{}');
-      if (!$('articleOutputDir').value) {
-        $('articleOutputDir').value = cfg.article_fetch_dir || cfg.style_dir || cfg.default_output_dir || 'reference';
+    function onTopicChange() {
+      const select = $('fetchTopicSelect');
+      const customInput = $('fetchTopicCustom');
+      if (select.value === '__custom__') {
+        customInput.style.display = 'block';
+        customInput.focus();
+      } else {
+        customInput.style.display = 'none';
       }
+    }
+
+    function getSelectedTopic() {
+      const select = $('fetchTopicSelect');
+      if (select.value === '__custom__') {
+        return $('fetchTopicCustom').value.trim();
+      }
+      return select.value;
     }
 
     async function fetchArticle() {
@@ -2833,42 +2931,44 @@
       }
 
       const cfg = JSON.parse(localStorage.getItem('cfg') || '{}');
-      const fetchDir = $('articleOutputDir').value.trim() || cfg.article_fetch_dir || cfg.style_dir || cfg.default_output_dir || 'reference';
-      if (!fetchDir) {
-        toast('请先在设置中配置文章抓取保存目录', 'error');
+      const fetchDir = cfg.article_fetch_dir || cfg.default_output_dir || '';
+      const topic = state.selectedFetchTopic || '新闻资讯';
+      if (!topic) {
+        toast('请选择学习主题', 'error');
         return;
       }
 
       $('fetchArticleBtn').disabled = true;
       $('fetchArticleText').textContent = '抓取中...';
-      $('fetchResult').innerHTML = '<div class="empty">正在抓取文章...</div>';
+      $('fetchResult').innerHTML = '<div class="empty">正在抓取并学习风格...</div>';
 
       try {
-        const r = await api.fetchArticle(url, fetchDir);
+        const r = await api.fetchArticle(url, fetchDir, topic);
         if (r.success) {
           $('fetchResult').innerHTML = `
             <div style="padding: 16px; background: var(--bg-secondary); border-radius: 8px;">
-              <div style="color: #16a34a; font-weight: 500; margin-bottom: 8px;">✅ 抓取成功</div>
+              <div style="color: #16a34a; font-weight: 500; margin-bottom: 8px;">✅ 学习成功</div>
               <div style="font-size: 13px; color: var(--text-secondary);">
                 <div>标题: ${escapeHtml(r.title || '未知')}</div>
-                <div>作者: ${escapeHtml(r.author || '未知')}</div>
+                <div>主题: ${escapeHtml(topic)}</div>
                 <div style="margin-top: 8px;">
                   <button class="btn btn-secondary btn-sm" onclick="openFile('${r.path}')">打开文件夹</button>
                 </div>
               </div>
             </div>
           `;
-          toast('文章抓取成功');
+          toast('风格学习成功');
+          loadTopicOverview(state.selectedFetchTopic);
         } else {
           $('fetchResult').innerHTML = `<div class="error-block"><span class="error-icon">❌</span><span class="error-msg">${r.error}</span></div>`;
-          toast('抓取失败: ' + r.error, 'error');
+          toast('学习失败: ' + r.error, 'error');
         }
       } catch (e) {
         $('fetchResult').innerHTML = `<div class="error-block"><span class="error-icon">❌</span><span class="error-msg">${e.message}</span></div>`;
-        toast('抓取失败', 'error');
+        toast('学习失败', 'error');
       } finally {
         $('fetchArticleBtn').disabled = false;
-        $('fetchArticleText').textContent = '抓取文章';
+        $('fetchArticleText').textContent = '抓取并学习';
       }
     }
 
@@ -2888,7 +2988,6 @@
         custom_model: $('customModel').value,
         default_model_provider: $('defaultModelSelect').value,
         default_output_dir: $('outputDir').value,
-        style_dir: $('styleDir').value,
         article_fetch_dir: $('articleFetchDir').value,
         article_editor: $('articleEditor').value,
         article_reviewer: $('articleReviewer').value
@@ -2919,7 +3018,7 @@
         showProjectsList(); 
       }
       if (pageId === 'settings') { loadConfig(); }
-      if (pageId === 'article-fetcher') { loadArticleFetcherConfig(); }
+      if (pageId === 'article-fetcher') { }
       if (pageId === 'logs') { loadLogs(); }
     }
 
@@ -3155,8 +3254,9 @@
         }
       }
       
-      const articleType = document.querySelector('.article-type-tab.active').dataset.type;
-      const maxStep = articleType === 'tutorial' ? 5 : 6;
+      const activeTab = document.querySelector('#workspaceTopicTabs .article-type-tab.active');
+      const articleType = activeTab ? activeTab.dataset.type : '新闻资讯';
+      const maxStep = articleType === '使用教程' ? 5 : 6;
       
       for (let i = 1; i <= maxStep; i++) {
         const ok = await runStep(i);
@@ -3202,19 +3302,6 @@
       }
     });
 
-    $('selectStyleDirBtn').addEventListener('click', async () => {
-      try {
-        const r = await api.selectDirectory();
-        if (r.success) {
-          $('styleDir').value = r.path;
-        } else if (r.error !== '用户取消选择') {
-          toast(r.error, 'error');
-        }
-      } catch (e) {
-        toast('无法打开文件夹选择器: ' + e.message, 'error');
-      }
-    });
-
     $('selectArticleFetchDirBtn').addEventListener('click', async () => {
       try {
         const r = await api.selectDirectory();
@@ -3228,37 +3315,16 @@
       }
     });
 
-    $('selectArticleDirBtn').addEventListener('click', async () => {
-      try {
-        const r = await api.selectDirectory();
-        if (r.success) {
-          $('articleOutputDir').value = r.path;
-        } else if (r.error !== '用户取消选择') {
-          toast(r.error, 'error');
-        }
-      } catch (e) {
-        toast('无法打开文件夹选择器: ' + e.message, 'error');
-      }
-    });
-
     $('topicInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') { $('startBtn').click(); }
     });
 
-    // Article type tab switching
-    document.querySelectorAll('.article-type-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.article-type-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        updateArticleTypeUI();
-      });
-    });
-
     function updateArticleTypeUI() {
-      const type = document.querySelector('.article-type-tab.active').dataset.type;
+      const activeTab = document.querySelector('#workspaceTopicTabs .article-type-tab.active');
+      const type = activeTab ? activeTab.dataset.type : '新闻资讯';
       const daysContainer = document.querySelector('.days-select-container');
       
-      if (type === 'news') {
+      if (type === '新闻资讯') {
         daysContainer.style.display = 'flex';
       } else {
         daysContainer.style.display = 'none';
@@ -3269,12 +3335,12 @@
 
     function updateStepsForType(type) {
       const steps = {
-        news: ['新闻搜索', '文章生成', '配图搜索', '文档导出', '内容提炼', '视频生成'],
-        tutorial: ['教程搜索', '教程整理', '配图搜索', '文档导出', '内容提炼'],
-        product: ['产品搜索', '评测生成', '配图搜索', '文档导出', '内容提炼', '视频生成']
+        '新闻资讯': ['新闻搜索', '文章生成', '配图搜索', '文档导出', '内容提炼', '视频生成'],
+        '使用教程': ['教程搜索', '教程整理', '配图搜索', '文档导出', '内容提炼'],
+        '产品介绍': ['产品搜索', '评测生成', '配图搜索', '文档导出', '内容提炼', '视频生成']
       };
       
-      const stepNames = steps[type] || steps.news;
+      const stepNames = steps[type] || steps['新闻资讯'];
       const stepElements = document.querySelectorAll('.notion-step');
       
       stepElements.forEach((el, index) => {
@@ -3287,6 +3353,293 @@
       });
     }
 
+    let customTopics = [];
+    
+    async function loadTopics() {
+      try {
+        const res = await api.listTopics();
+        if (res.success) {
+          customTopics = res.custom_topics || [];
+        }
+      } catch (e) {
+        console.error('加载主题失败:', e);
+      }
+    }
+    
+    function selectTopic(topic) {
+      state.selectedFetchTopic = topic;
+      
+      // Remove any existing custom topic tab
+      const existingCustom = document.querySelector('#fetchTopicTabs .article-type-tab.custom-topic');
+      if (existingCustom) existingCustom.remove();
+      
+      const tabs = document.querySelectorAll('#fetchTopicTabs .article-type-tab');
+      tabs.forEach(tab => { tab.classList.remove('active'); });
+      
+      let activeTab = document.querySelector(`#fetchTopicTabs .article-type-tab[data-type="${escapeHtml(topic)}"]`);
+      
+      if (!activeTab) {
+        // Create a custom topic tab dynamically
+        const moreBtn = document.getElementById('moreTopicBtn');
+        const customTab = document.createElement('div');
+        customTab.className = 'article-type-tab custom-topic active';
+        customTab.setAttribute('data-type', escapeHtml(topic));
+        customTab.innerHTML = `<span>🏷️</span><span class="article-type-label">${escapeHtml(topic)}</span>`;
+        customTab.addEventListener('click', () => {
+          document.querySelectorAll('#fetchTopicTabs .article-type-tab').forEach(t => t.classList.remove('active'));
+          customTab.classList.add('active');
+        });
+        moreBtn.parentNode.insertBefore(customTab, moreBtn);
+      } else {
+        activeTab.classList.add('active');
+      }
+      
+      closeMoreTopics();
+      loadTopicOverview(topic);
+    }
+    
+    function showMoreTopics(e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('moreTopicDropdown');
+      const moreBtn = document.getElementById('moreTopicBtn');
+      
+      if (dropdown.style.display === 'block') {
+        closeMoreTopics();
+        return;
+      }
+      
+      let html = '';
+      if (customTopics.length > 0) {
+        html += '<div style="padding: 8px 12px; font-size: 12px; color: #666; border-bottom: 1px solid #eee; margin-bottom: 4px;">自定义主题</div>';
+        customTopics.forEach(topic => {
+          html += `<div class="dropdown-item" onclick="selectTopic('${escapeHtml(topic)}')">${escapeHtml(topic)}</div>`;
+        });
+      }
+      html += '<div class="dropdown-item" style="border-top: 1px solid #eee; margin-top: 4px; padding-top: 8px;" onclick="showCreateTopicDialog()">+ 创建新主题</div>';
+      
+      dropdown.innerHTML = html;
+      
+      const rect = moreBtn.getBoundingClientRect();
+      dropdown.style.left = rect.left + 'px';
+      dropdown.style.top = (rect.bottom + 8) + 'px';
+      dropdown.style.display = 'block';
+      
+      document.addEventListener('click', handleOutsideClick);
+    }
+    
+    function closeMoreTopics() {
+      const dropdown = document.getElementById('moreTopicDropdown');
+      dropdown.style.display = 'none';
+      document.removeEventListener('click', handleOutsideClick);
+    }
+    
+    function handleOutsideClick(e) {
+      const dropdown = document.getElementById('moreTopicDropdown');
+      const moreBtn = document.getElementById('moreTopicBtn');
+      if (!dropdown.contains(e.target) && !moreBtn.contains(e.target)) {
+        closeMoreTopics();
+      }
+    }
+    
+    function showCreateTopicDialog() {
+      closeMoreTopics();
+      const topicName = prompt('请输入新主题名称:');
+      if (topicName && topicName.trim()) {
+        createNewTopic(topicName.trim());
+      }
+    }
+    
+    async function createNewTopic(topicName) {
+      try {
+        const response = await fetch(API_BASE + '/topic/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: topicName })
+        });
+        const result = await response.json();
+        if (result.success) {
+          await loadTopics();
+          selectTopic(topicName);
+          toast('主题创建成功');
+        } else {
+          toast('创建失败: ' + (result.error || '未知错误'), 'error');
+        }
+      } catch (e) {
+        toast('创建失败: ' + e.message, 'error');
+      }
+    }
+    
+    function initFetchTopicTabs() {
+      const tabs = document.querySelectorAll('#fetchTopicTabs .article-type-tab');
+      tabs.forEach(tab => {
+        if (tab.id !== 'moreTopicBtn') {
+          tab.addEventListener('click', () => {
+            // Remove any custom topic tab
+            const existingCustom = document.querySelector('#fetchTopicTabs .article-type-tab.custom-topic');
+            if (existingCustom) existingCustom.remove();
+            selectTopic(tab.dataset.type);
+          });
+        }
+      });
+      state.selectedFetchTopic = '新闻资讯';
+    }
+
+    async function loadTopicOverview(topic) {
+      const overview = document.getElementById('topicOverview');
+      const overviewName = document.getElementById('topicOverviewName');
+      const emptyBlock = document.getElementById('topicOverviewEmpty');
+      const cards = document.querySelectorAll('.topic-overview-card');
+      
+      if (!topic) {
+        overview.style.display = 'none';
+        return;
+      }
+      
+      overviewName.textContent = `- ${topic}`;
+      
+      try {
+        const r = await api.getTopicInfo(topic);
+        if (!r.success || !r.info) {
+          overview.style.display = 'none';
+          return;
+        }
+        
+        const info = r.info;
+        
+        if (info.actual_article_dirs === 0 && !info.has_style) {
+          // No data at all - show empty state
+          overview.style.display = 'block';
+          emptyBlock.style.display = 'block';
+          cards.forEach(c => c.style.display = 'none');
+          return;
+        }
+        
+        overview.style.display = 'block';
+        emptyBlock.style.display = 'none';
+        cards.forEach(c => c.style.display = '');
+        
+        document.getElementById('topicArticleCount').textContent = String(info.actual_article_dirs || info.article_count || 0);
+        document.getElementById('topicImageCount').textContent = String(info.total_images || 0);
+        
+        const size = info.style_size || 0;
+        if (size > 1024) {
+          document.getElementById('topicStyleSize').textContent = (size / 1024).toFixed(1) + ' KB';
+        } else if (size > 0) {
+          document.getElementById('topicStyleSize').textContent = size + ' B';
+        } else {
+          document.getElementById('topicStyleSize').textContent = '-';
+        }
+        
+        if (info.updated_at) {
+          document.getElementById('topicUpdatedAt').textContent = info.updated_at.slice(0, 10);
+        } else {
+          document.getElementById('topicUpdatedAt').textContent = '暂无';
+        }
+      } catch (e) {
+        console.error('加载主题概览失败:', e);
+        overview.style.display = 'none';
+      }
+    }
+    
+    function selectWorkspaceTopic(topic) {
+      state.selectedWorkspaceTopic = topic;
+      
+      // Remove any existing custom topic tab
+      const existingCustom = document.querySelector('#workspaceTopicTabs .article-type-tab.custom-topic');
+      if (existingCustom) existingCustom.remove();
+      
+      document.querySelectorAll('#workspaceTopicTabs .article-type-tab').forEach(t => t.classList.remove('active'));
+      
+      // Check if it's a default topic tab
+      let activeTab = document.querySelector(`#workspaceTopicTabs .article-type-tab[data-type="${escapeHtml(topic)}"]`);
+      
+      if (!activeTab) {
+        // Create a custom topic tab dynamically
+        const moreBtn = document.getElementById('workspaceMoreBtn');
+        const customTab = document.createElement('div');
+        customTab.className = 'article-type-tab custom-topic active';
+        customTab.setAttribute('data-type', escapeHtml(topic));
+        customTab.innerHTML = `<span>🏷️</span><span class="article-type-label">${escapeHtml(topic)}</span>`;
+        customTab.addEventListener('click', () => {
+          document.querySelectorAll('#workspaceTopicTabs .article-type-tab').forEach(t => t.classList.remove('active'));
+          customTab.classList.add('active');
+          updateArticleTypeUI();
+        });
+        moreBtn.parentNode.insertBefore(customTab, moreBtn);
+      } else {
+        activeTab.classList.add('active');
+      }
+      
+      closeWorkspaceMoreTopics();
+      updateArticleTypeUI();
+    }
+    
+    function showWorkspaceMoreTopics(e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('workspaceMoreDropdown');
+      const moreBtn = document.getElementById('workspaceMoreBtn');
+      
+      if (dropdown.style.display === 'block') {
+        closeWorkspaceMoreTopics();
+        return;
+      }
+      
+      let html = '';
+      if (customTopics.length > 0) {
+        html += '<div style="padding: 8px 12px; font-size: 12px; color: #666; border-bottom: 1px solid #eee; margin-bottom: 4px;">自定义主题</div>';
+        customTopics.forEach(topic => {
+          html += `<div class="dropdown-item" onclick="selectWorkspaceTopic('${escapeHtml(topic)}')">${escapeHtml(topic)}</div>`;
+        });
+      }
+      html += '<div class="dropdown-item" style="border-top: 1px solid #eee; margin-top: 4px; padding-top: 8px;" onclick="showCreateTopicDialog()">+ 创建新主题</div>';
+      
+      dropdown.innerHTML = html;
+      
+      const rect = moreBtn.getBoundingClientRect();
+      dropdown.style.left = rect.left + 'px';
+      dropdown.style.top = (rect.bottom + 8) + 'px';
+      dropdown.style.display = 'block';
+      
+      document.addEventListener('click', handleWorkspaceOutsideClick);
+    }
+    
+    function closeWorkspaceMoreTopics() {
+      const dropdown = document.getElementById('workspaceMoreDropdown');
+      dropdown.style.display = 'none';
+      document.removeEventListener('click', handleWorkspaceOutsideClick);
+    }
+    
+    function handleWorkspaceOutsideClick(e) {
+      const dropdown = document.getElementById('workspaceMoreDropdown');
+      const moreBtn = document.getElementById('workspaceMoreBtn');
+      if (!dropdown.contains(e.target) && !moreBtn.contains(e.target)) {
+        closeWorkspaceMoreTopics();
+      }
+    }
+    
+    function initWorkspaceTopicTabs() {
+      const tabs = document.querySelectorAll('#workspaceTopicTabs .article-type-tab');
+      tabs.forEach(tab => {
+        if (tab.id !== 'workspaceMoreBtn') {
+          tab.addEventListener('click', () => {
+            // Remove any custom topic tab
+            const existingCustom = document.querySelector('#workspaceTopicTabs .article-type-tab.custom-topic');
+            if (existingCustom) existingCustom.remove();
+            document.querySelectorAll('#workspaceTopicTabs .article-type-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            updateArticleTypeUI();
+          });
+        }
+      });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      loadTopics();
+      initFetchTopicTabs();
+      initWorkspaceTopicTabs();
+      loadTopicOverview('新闻资讯');
+    });
+    
     logger.info('创作方舟已启动');
     loadConfig();
     updateArticleTypeUI();

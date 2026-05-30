@@ -6,7 +6,7 @@ import sys
 import datetime
 import re
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 import subprocess
 
 BASE_DIR = Path(__file__).parent.parent.resolve()
@@ -185,6 +185,84 @@ class Handler(http.server.BaseHTTPRequestHandler):
             else:
                 self.send_json({'success': False, 'error': 'index.html not found'}, 404)
 
+        elif parsed.path == '/api/topics/list':
+            try:
+                reference_dir = BASE_DIR / 'reference'
+                default_topics = ['新闻资讯', '使用教程', '产品介绍']
+                
+                custom_topics = []
+                if reference_dir.exists() and reference_dir.is_dir():
+                    for item in os.listdir(reference_dir):
+                        item_path = reference_dir / item
+                        if item_path.is_dir() and item not in default_topics:
+                            custom_topics.append(item)
+                
+                self.send_json({
+                    'success': True,
+                    'default_topics': default_topics,
+                    'custom_topics': custom_topics
+                })
+            except Exception as e:
+                self.send_json({'success': False, 'error': str(e)}, 500)
+
+        elif parsed.path == '/api/topic/info':
+            query = parse_qs(parsed.query)
+            topic = query.get('topic', [''])[0]
+            
+            if not topic:
+                self.send_json({'success': False, 'error': '缺少 topic 参数'}, 400)
+                return
+            
+            reference_dir = BASE_DIR / 'reference'
+            topic_dir = reference_dir / topic
+            
+            if not topic_dir.exists() or not topic_dir.is_dir():
+                self.send_json({'success': False, 'error': '主题不存在'}, 404)
+                return
+            
+            try:
+                info = {'topic': topic, 'has_style': False, 'has_index': False, 'article_count': 0, 'updated_at': '', 'style_summary': '', 'style_size': 0}
+                
+                # Check index.json
+                index_path = topic_dir / 'index.json'
+                if index_path.exists():
+                    info['has_index'] = True
+                    with open(index_path, 'r', encoding='utf-8') as f:
+                        index_data = json.load(f)
+                        info['article_count'] = len(index_data.get('articles', []))
+                        info['updated_at'] = index_data.get('updated_at', '')
+                
+                # Check style.md
+                style_path = topic_dir / 'style.md'
+                if style_path.exists():
+                    info['has_style'] = True
+                    info['style_size'] = style_path.stat().st_size
+                    with open(style_path, 'r', encoding='utf-8') as f:
+                        first_lines = ''.join([f.readline() for _ in range(5)])
+                        info['style_summary'] = first_lines.strip()
+                        # Extract "based on N articles" if present
+                        match = re.search(r'基于\s*(\d+)\s*篇', first_lines)
+                        if match:
+                            info['based_on_articles'] = int(match.group(1))
+                
+                # Count actual article subdirectories
+                actual_articles = 0
+                total_images = 0
+                if topic_dir.exists():
+                    for item in os.listdir(topic_dir):
+                        item_path = topic_dir / item
+                        if item_path.is_dir():
+                            actual_articles += 1
+                            for f in os.listdir(item_path):
+                                if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
+                                    total_images += 1
+                info['actual_article_dirs'] = actual_articles
+                info['total_images'] = total_images
+                
+                self.send_json({'success': True, 'info': info})
+            except Exception as e:
+                self.send_json({'success': False, 'error': str(e)}, 500)
+
         else:
             self.send_json({'success': False, 'error': 'Not found'}, 404)
 
@@ -201,7 +279,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     with open(config_path, 'r', encoding='utf-8') as f:
                         config = json.load(f)
 
-                for key in ['tavily_api_key', 'minimax_api_key', 'minimax_model', 'deepseek_api_key', 'deepseek_base_url', 'deepseek_model', 'openai_api_key', 'openai_base_url', 'openai_model', 'custom_api_key', 'custom_base_url', 'custom_model', 'default_model_provider', 'pexels_api_key', 'default_output_dir', 'article_editor', 'article_reviewer', 'style_dir', 'article_fetch_dir']:
+                for key in ['tavily_api_key', 'minimax_api_key', 'minimax_model', 'deepseek_api_key', 'deepseek_base_url', 'deepseek_model', 'openai_api_key', 'openai_base_url', 'openai_model', 'custom_api_key', 'custom_base_url', 'custom_model', 'default_model_provider', 'pexels_api_key', 'default_output_dir', 'article_editor', 'article_reviewer', 'article_fetch_dir']:
                     if key in data:
                         config[key] = data[key]
 
@@ -314,6 +392,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             try:
                 data = json.loads(body) if body else {}
                 research_file = data.get('research_file', '')
+                article_type = data.get('article_type', '')
 
                 if not research_file or not os.path.exists(research_file):
                     self.send_json({'success': False, 'error': '研究资料文件不存在'}, 400)
@@ -332,6 +411,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     '--output', output_dir,
                     '--json'
                 ]
+                if article_type:
+                    cmd.extend(['--style-topic', article_type])
 
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
 
@@ -706,6 +787,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 data = json.loads(body) if body else {}
                 topic = data.get('topic', '')
                 days = int(data.get('days', 7))
+                article_type = data.get('article_type', '')
 
                 if not topic:
                     self.send_json({'success': False, 'error': '缺少创作主题'}, 400)
@@ -733,8 +815,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
                 self.send_json({'success': True, 'message': '流水线已启动', 'output_dir': output_dir})
 
+                pipeline_cmd = [sys.executable, str(pipeline_script), topic, '--output', output_dir, '--days', str(days)]
+                if article_type:
+                    pipeline_cmd.extend(['--style-topic', article_type])
+                
                 subprocess.Popen(
-                    [sys.executable, str(pipeline_script), topic, '--output', output_dir, '--days', str(days)],
+                    pipeline_cmd,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
@@ -749,6 +835,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 data = json.loads(body) if body else {}
                 url = data.get('url', '')
                 output_dir = data.get('output_dir', '')
+                topic = data.get('topic', '')
 
                 if not url:
                     self.send_json({'success': False, 'error': '缺少文章链接'}, 400)
@@ -758,7 +845,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     url = 'https://' + url
 
                 if not output_dir:
-                    output_dir = get_default_output_dir()
+                    output_dir = str(BASE_DIR / 'reference')
 
                 os.makedirs(output_dir, exist_ok=True)
 
@@ -767,33 +854,93 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     self.send_json({'success': False, 'error': '文章抓取脚本未找到'}, 404)
                     return
 
+                fetch_cmd = [sys.executable, str(fetch_script), url, '-o', output_dir]
+                if topic:
+                    fetch_cmd.extend(['-t', topic])
+
                 result = subprocess.run(
-                    [sys.executable, str(fetch_script), url, '-o', output_dir],
+                    fetch_cmd,
                     capture_output=True,
                     text=True,
                     timeout=120,
                     cwd=str(fetch_script.parent)
                 )
 
-                if result.returncode == 0:
-                    title_match = re.search(r'保存到[:：]\s*(.+)', result.stdout)
-                    path_match = re.search(r'文件已保存[:：]\s*(.+)', result.stdout)
-
-                    self.send_json({
-                        'success': True,
-                        'message': '文章抓取成功',
-                        'path': path_match.group(1) if path_match else output_dir,
-                        'title': title_match.group(1) if title_match else ''
-                    })
-                else:
+                if result.returncode != 0:
                     error_output = result.stderr or result.stdout
                     self.send_json({'success': False, 'error': error_output[:500]})
+                    return
+
+                # 解析 JSON 输出
+                json_match = re.search(r'---RESULT_JSON---\s*(\{.*\})\s*$', result.stdout, re.DOTALL)
+                fetch_result = {}
+                if json_match:
+                    try:
+                        fetch_result = json.loads(json_match.group(1))
+                    except Exception:
+                        pass
+                
+                title = fetch_result.get('title', '')
+                saved_path = fetch_result.get('target_dir', output_dir)
+                html_path = fetch_result.get('html_path', '')
+                images_json_path = fetch_result.get('images_json_path', '')
+                
+                if topic and html_path and images_json_path:
+                    analyze_script = BASE_DIR / 'article-fetcher' / 'scripts' / 'analyze_and_update_style.py'
+                    
+                    if analyze_script.exists():
+                        cmd = [sys.executable, str(analyze_script), topic, title, url, '--content-file', html_path, '--images', images_json_path, '--output-dir', str(BASE_DIR / 'reference')]
+                        
+                        subprocess.run(
+                            cmd,
+                            capture_output=True,
+                            text=True,
+                            timeout=60,
+                            cwd=str(analyze_script.parent)
+                        )
+
+                self.send_json({
+                    'success': True,
+                    'message': '文章抓取成功' + ('，正在分析风格...' if topic else ''),
+                    'path': saved_path,
+                    'title': title
+                })
 
             except subprocess.TimeoutExpired:
                 self.send_json({'success': False, 'error': '抓取超时'}, 504)
             except Exception as e:
                 self.send_json({'success': False, 'error': str(e)}, 500)
 
+        elif parsed.path == '/api/topic/create':
+            try:
+                data = json.loads(body) if body else {}
+                topic = data.get('topic', '').strip()
+                
+                if not topic:
+                    self.send_json({'success': False, 'error': '主题名称不能为空'}, 400)
+                    return
+                
+                default_topics = ['新闻资讯', '使用教程', '产品介绍']
+                if topic in default_topics:
+                    self.send_json({'success': False, 'error': '该主题已存在'}, 400)
+                    return
+                
+                reference_dir = BASE_DIR / 'reference'
+                topic_dir = reference_dir / topic
+                
+                if topic_dir.exists():
+                    self.send_json({'success': False, 'error': '该主题已存在'}, 400)
+                    return
+                
+                os.makedirs(topic_dir, exist_ok=True)
+                
+                self.send_json({
+                    'success': True,
+                    'message': '主题创建成功'
+                })
+            except Exception as e:
+                self.send_json({'success': False, 'error': str(e)}, 500)
+        
         elif parsed.path == '/api/dialog/select-directory':
             try:
                 import tkinter as tk

@@ -8,6 +8,7 @@ Extracts image metadata (URLs, positions, surrounding text) for style learning.
 
 import sys
 import argparse
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 import time
 import os
@@ -169,13 +170,22 @@ def fetch_article(url, output_dir, wait_time=5, topic=None):
 def main():
     parser = argparse.ArgumentParser(description='Fetch WeChat article with topic support')
     parser.add_argument('url', help='WeChat article URL')
-    parser.add_argument('-o', '--output-dir', default='.',
-                        help='Base output directory')
+    parser.add_argument('-o', '--output-dir', default=None,
+                        help='Base output directory (default: {project}/reference)')
     parser.add_argument('-t', '--topic', default=None,
                         help='Topic folder name (e.g. AI创业). Creates topic subfolder.')
     parser.add_argument('-w', '--wait', type=int, default=5,
                         help='Wait time in seconds')
     args = parser.parse_args()
+
+    if args.output_dir is None:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        skill_dir = os.path.dirname(script_dir)
+        args.output_dir = os.path.join(skill_dir, '..', 'reference')
+    else:
+        output_path = Path(args.output_dir).resolve()
+        if not (str(output_path).endswith('reference') or str(output_path).endswith('reference' + os.sep)):
+            args.output_dir = os.path.join(args.output_dir, 'reference')
 
     os.makedirs(args.output_dir, exist_ok=True)
 

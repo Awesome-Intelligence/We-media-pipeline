@@ -205,24 +205,14 @@ def get_image_search_engine():
 
 def get_style_dir():
     """
-    Get the style directory for article-fetcher to save learned styles.
+    Get the style directory for article-fetcher and article-writer.
     
-    Priority:
-      1. Project config (style_dir)
-      2. article-fetcher local config
-      3. Default: {project_root}/styles
+    Fixed location: {project_root}/reference/
     
     Returns:
-        str: Absolute path to style directory
+        str: Absolute path to reference directory
     """
-    style_dir = get_config_value('style_dir', skill_name='article-fetcher')
-    if style_dir and str(style_dir).strip():
-        path = Path(style_dir)
-        if not path.is_absolute():
-            path = get_project_root() / style_dir
-        return str(path.resolve())
-    
-    return str(get_project_root() / 'styles')
+    return str(get_project_root() / 'reference')
 
 
 def get_style_path(topic):

@@ -36,7 +36,7 @@ pip install requests
   "minimax_api_key": "your_minimax_key_here",
   "pexels_api_key": "your_pexels_key_here",
   "default_output_dir": "output",
-  "style_dir": "",
+  "article_fetch_dir": "output/fetched_articles",
   "news_search": {
     "default_days": 7,
     "default_results": 10
@@ -111,21 +111,10 @@ we-media-pipeline/
 
 | 级别 | 配置文件 | 用途 |
 |------|----------|------|
-| 项目全局 | `config.json` | `style_dir` 指定风格存储目录 |
-| Fetcher 本地 | `article-fetcher/config.json` | 覆盖风格保存路径 |
-| Writer 本地 | `article-writer/config.json` | 指定风格读取路径 |
+| 项目全局 | `config.json` | `article_fetch_dir` 指定文章抓取目录 |
+| 项目全局 | `config.json` | `default_output_dir` 指定创作输出目录 |
 
-### 配置优先级
-
-**风格目录 (style_dir)**：
-1. 项目 `config.json` 中的 `style_dir`
-2. Skill 本地 `config.json` 中的 `style_dir`
-3. 默认值：`{项目根目录}/styles`
-
-**风格读取路径**：
-1. Writer 本地 `config.json` 中的 `style_source`
-2. 项目 `config.json` 中的 `style_dir`
-3. Skill 内置 `references/style-guide.md`
+**风格文件位置（固定）：** `{项目根目录}/reference/`
 
 ### 使用流程
 
@@ -133,48 +122,32 @@ we-media-pipeline/
 ```
 用户：学习这篇文章，主题是AI创业
     ↓
-将风格保存到 {style_dir}/{主题}/style.md
+将风格保存到 {项目根目录}/reference/{主题}/style.md
 ```
 
 **Writer 生成文章**：
 ```
 用户：生成一篇关于AI创业的文章
     ↓
-尝试读取 {style_dir}/{主题}/style.md
+尝试读取 {项目根目录}/reference/{主题}/style.md
     ↓
 如果存在 → 使用学习的风格
-如果不存在 → 使用内置 style-guide.md
+如果不存在 → 使用 {项目根目录}/reference/style-guide.md
 ```
-
-### 配置示例
-
-**使用默认路径**（全部留空）：
-- fetcher 保存到 `styles/{主题}/style.md`
-- writer 从相同位置读取
-
-**自定义风格目录**：
-```json
-// config.json
-{
-  "style_dir": "E:\\MyStyles"
-}
-```
-- fetcher 保存到 `E:\MyStyles/{主题}/style.md`
-- writer 从相同位置读取
 
 ### 代码使用
 
 ```python
 from shared.config_loader import get_style_dir, get_style_path
 
-style_dir = get_style_dir()                    # 获取风格目录
+style_dir = get_style_dir()                    # 获取风格目录 (reference/)
 style_path = get_style_path("AI创业")           # 获取特定主题的风格文件
 ```
 
 ### 注意事项
 
-1. **相对路径**：`style_dir` 配置为相对路径时会相对于项目根目录解析
-2. **绝对路径**：建议使用绝对路径以避免歧义
+1. **固定位置**：风格文件现在固定在 `{项目根目录}/reference/`，不需要配置
+2. **文章抓取**：通过 `article_fetch_dir` 配置抓取文章的保存位置
 3. **回退机制**：writer 如果找不到学习的风格，会自动回退到内置风格
 
 ## API 端口

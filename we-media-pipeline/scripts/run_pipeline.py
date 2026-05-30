@@ -37,6 +37,40 @@ def ensure_dir(directory):
 
     return directory
 
+def read_file_safe(file_path):
+
+    """Read file content safely, return None if not exists."""
+
+    try:
+
+        if os.path.exists(file_path):
+
+            with open(file_path, 'r', encoding='utf-8') as f:
+
+                return f.read()
+
+    except Exception:
+
+        pass
+
+    return None
+
+def list_images_safe(images_dir):
+
+    """List image files in directory safely."""
+
+    try:
+
+        if os.path.exists(images_dir):
+
+            return [f for f in os.listdir(images_dir) if f.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp'))]
+
+    except Exception:
+
+        pass
+
+    return []
+
 def step1_dispatch(topic, output_dir, search_type='news', days=None, num_results=None):
 
     """Dispatch to the appropriate Step 1 search function based on search_type."""
@@ -126,7 +160,13 @@ def step1_search_news(topic, output_dir, days=None, num_results=None):
 
             return False, None
 
-        
+        if not results['results']:
+
+            print(f"✗ No results found for query: {topic}")
+
+            return False, None
+
+
 
         research_file = os.path.join(output_dir, "01_research.md")
 
@@ -166,7 +206,7 @@ def step1_search_news(topic, output_dir, days=None, num_results=None):
 
         
 
-        return True, research_file
+        return True, research_file, results.get('results', [])
 
         
 
@@ -177,9 +217,8 @@ def step1_search_news(topic, output_dir, days=None, num_results=None):
         return False, None
 
     except Exception as e:
-
-        print(f"✗ Error during news search: {e}")
-
+        error_msg = str(e)
+        print(f"✗ Error during news search: {error_msg}")
         return False, None
 
 
@@ -194,7 +233,7 @@ def step1_search_tutorial(topic, output_dir, api_key=None):
 
     if not api_key:
         print("✗ Error: Tavily API key not configured")
-        return False, None
+        return False, None, None
 
     news_search_path = Path(__file__).parent.parent.parent / "news-searcher" / "scripts"
     if not news_search_path.exists():
@@ -207,7 +246,7 @@ def step1_search_tutorial(topic, output_dir, api_key=None):
         from search_news import search_news_tavily
     except ImportError:
         print("✗ Error: Could not import news-searcher module")
-        return False, None
+        return False, None, None
 
     tutorial_queries = [
         topic,
@@ -237,7 +276,7 @@ def step1_search_tutorial(topic, output_dir, api_key=None):
 
     if not all_results:
         print("  No tutorial results found")
-        return False, None
+        return False, None, None
 
     print("  Found %d sources" % len(all_results))
     all_images = list(dict.fromkeys(all_images))
@@ -258,7 +297,7 @@ def step1_search_tutorial(topic, output_dir, api_key=None):
 
     print("\n  [OK] Tutorial research saved: %s" % research_file)
     print("  Found %d source images" % len(all_images))
-    return True, research_file
+    return True, research_file, all_results
 
 
 def step1_search_product(topic, output_dir, api_key=None):
@@ -272,7 +311,7 @@ def step1_search_product(topic, output_dir, api_key=None):
 
     if not api_key:
         print("✗ Error: Tavily API key not configured")
-        return False, None
+        return False, None, None
 
     news_search_path = Path(__file__).parent.parent.parent / "news-searcher" / "scripts"
     if not news_search_path.exists():
@@ -285,7 +324,7 @@ def step1_search_product(topic, output_dir, api_key=None):
         from search_news import search_news_tavily
     except ImportError:
         print("✗ Error: Could not import news-searcher module")
-        return False, None
+        return False, None, None
 
     product_queries = [
         topic,
@@ -315,7 +354,7 @@ def step1_search_product(topic, output_dir, api_key=None):
 
     if not all_results:
         print("  No product results found")
-        return False, None
+        return False, None, None
 
     print("  Found %d sources" % len(all_results))
     all_images = list(dict.fromkeys(all_images))
@@ -336,7 +375,7 @@ def step1_search_product(topic, output_dir, api_key=None):
 
     print("\n  [OK] Product research saved: %s" % research_file)
     print("  Found %d source images" % len(all_images))
-    return True, research_file
+    return True, research_file, all_results
 
 
 def step2_generate_article(research_file, output_dir):
@@ -366,8 +405,12 @@ def step2_generate_article(research_file, output_dir):
         research_content = f.read()
 
     skill_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-    style_guide_path = os.path.join(skill_dir, "article-writer", "references", "style-guide.md")
+    
+    style_guide_path = os.path.join(skill_dir, "reference", "style-guide.md")
+    if not os.path.exists(style_guide_path):
+        style_guide_path = os.path.join(skill_dir, "article-writer", "references", "style-guide.md")
+    if not os.path.exists(style_guide_path):
+        raise FileNotFoundError(f"style-guide.md not found: {style_guide_path}")
 
     with open(style_guide_path, "r", encoding="utf-8") as f:
 
@@ -1439,54 +1482,31 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
         6. Generate Video (wechat-video-generator)
 
     """
-
+    
     skip_steps = skip_steps or []
-
     
-
+    explicit_output_dir = output_dir is not None
+    
     if output_dir:
-
         base_dir = output_dir
-
     else:
-
         base_dir = get_default_output_dir()
-
     
-
-    if skip_steps:
-
+    if explicit_output_dir:
+        ensure_dir(base_dir)
+        output_dir = base_dir
+    else:
         existing_folder = find_existing_folder(topic, base_dir)
 
         if existing_folder:
-
             output_dir = existing_folder
-
             print(f"\n📁 Using existing folder: {output_dir}")
-
         else:
-
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
             safe_topic = "".join(c if c.isalnum() or c in (' ', '-') else '_' for c in topic).strip()
-
             safe_topic = safe_topic.replace(' ', '_')
-
             output_dir = os.path.join(base_dir, f"{timestamp}_{safe_topic}")
-
             ensure_dir(output_dir)
-
-    else:
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        safe_topic = "".join(c if c.isalnum() or c in (' ', '-') else '_' for c in topic).strip()
-
-        safe_topic = safe_topic.replace(' ', '_')
-
-        output_dir = os.path.join(base_dir, f"{timestamp}_{safe_topic}")
-
-        ensure_dir(output_dir)
 
     
 
@@ -1518,21 +1538,27 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
 
     if 1 not in skip_steps:
 
-        success, research_file = step1_dispatch(topic, output_dir, type_, days=days, num_results=num_results)
-
-        results['steps'][1] = {'success': success, 'file': research_file}
+        success, research_file, search_results = step1_dispatch(topic, output_dir, type_, days=days, num_results=num_results)
+        content = read_file_safe(research_file)
+        results['steps'][1] = {'success': success, 'file': research_file, 'content': content, 'results': search_results}
 
         if not success:
-
+            results['success'] = False
+            results['steps'][1]['error'] = 'News search failed'
             print("\n✗ Pipeline stopped at Step 1")
-
             return results
 
     else:
 
         research_file = os.path.join(output_dir, "01_research.md")
-
-        results['steps'][1] = {'success': True, 'file': research_file, 'skipped': True}
+        if not os.path.exists(research_file):
+            error_msg = f"Research file not found: {research_file}"
+            print(f"\n✗ Cannot skip Step 1: {error_msg}")
+            results['steps'][1] = {'success': False, 'file': research_file, 'error': error_msg}
+            results['success'] = False
+            return results
+        content = read_file_safe(research_file)
+        results['steps'][1] = {'success': True, 'file': research_file, 'content': content, 'skipped': True}
 
     
 
@@ -1541,8 +1567,8 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
     if 2 not in skip_steps:
 
         success, article_file = step2_generate_article(research_file, output_dir)
-
-        results['steps'][2] = {'success': success, 'file': article_file}
+        content = read_file_safe(article_file)
+        results['steps'][2] = {'success': success, 'file': article_file, 'content': content}
 
         if not success:
 
@@ -1555,8 +1581,8 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
     else:
 
         article_file = os.path.join(output_dir, "02_article.md")
-
-        results['steps'][2] = {'success': True, 'file': article_file, 'skipped': True}
+        content = read_file_safe(article_file)
+        results['steps'][2] = {'success': True, 'file': article_file, 'content': content, 'skipped': True}
 
     
 
@@ -1565,8 +1591,8 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
     if humanize:
 
         success, humanized_file = step2_5_humanize(article_file, output_dir, aggressive=humanize_aggressive)
-
-        results['steps']['2.5'] = {'success': success, 'file': humanized_file}
+        content = read_file_safe(humanized_file)
+        results['steps']['2.5'] = {'success': success, 'file': humanized_file, 'content': content}
 
         if not success:
 
@@ -1579,8 +1605,8 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
     if 3 not in skip_steps:
 
         success, images_dir = step3_search_images(article_file, output_dir)
-
-        results['steps'][3] = {'success': success, 'dir': images_dir}
+        images = list_images_safe(images_dir)
+        results['steps'][3] = {'success': success, 'dir': images_dir, 'images': images}
 
         if not success:
 
@@ -1591,8 +1617,8 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
     else:
 
         images_dir = os.path.join(output_dir, "images_good")
-
-        results['steps'][3] = {'success': True, 'dir': images_dir, 'skipped': True}
+        images = list_images_safe(images_dir)
+        results['steps'][3] = {'success': True, 'dir': images_dir, 'images': images, 'skipped': True}
 
     
 
@@ -1614,15 +1640,15 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
 
         results['steps'][4] = {'success': True, 'skipped': True}
 
-    
+
 
     # Step 5: Generate content.json (requires LLM)
 
     if 5 not in skip_steps:
 
         success, content_json_file = step5_generate_content_json(article_file, output_dir)
-
-        results['steps'][5] = {'success': success, 'file': content_json_file}
+        content = read_file_safe(content_json_file)
+        results['steps'][5] = {'success': success, 'file': content_json_file, 'content': content}
 
         if not success:
 
@@ -1635,10 +1661,10 @@ def run_pipeline(topic, skip_steps=None, output_dir=None, humanize=False, humani
     else:
 
         content_json_file = os.path.join(output_dir, "05_content.json")
+        content = read_file_safe(content_json_file)
+        results['steps'][5] = {'success': True, 'file': content_json_file, 'content': content, 'skipped': True}
 
-        results['steps'][5] = {'success': True, 'file': content_json_file, 'skipped': True}
 
-    
 
     # Step 6: Generate Video
 
@@ -1800,6 +1826,8 @@ def main():
 
     parser.add_argument('--humanize-aggressive', action='store_true', help='Use aggressive mode for humanization')
 
+    parser.add_argument('--json', action='store_true', help='Output results as JSON')
+
     args = parser.parse_args()
 
     
@@ -1848,47 +1876,48 @@ def main():
 
     results = run_pipeline(args.topic, skip_steps=args.skip, output_dir=args.output, humanize=args.humanize, humanize_aggressive=args.humanize_aggressive, type_=args.type, days=args.days, num_results=args.num_results)
 
-    
+    output_dir = results.get('output_dir', '')
+
+    if args.json:
+        import json as json_module
+        results['output_dir'] = output_dir
+        print(json_module.dumps(results, ensure_ascii=False, indent=2))
+        return 0 if results['success'] else 1
 
     if args.open_folder and results['success']:
-
         import subprocess
 
-        output_path = results.get('output_dir', '')
+        if output_dir and os.path.exists(output_dir):
 
-        if output_path and os.path.exists(output_path):
-
-            print(f"\nOpening folder: {output_path}")
+            print(f"\nOpening folder: {output_dir}")
 
             if sys.platform == 'win32':
 
-                subprocess.run(['explorer', output_path])
+                subprocess.run(['explorer', output_dir])
 
             elif sys.platform == 'darwin':
 
-                subprocess.run(['open', output_path])
+                subprocess.run(['open', output_dir])
 
             else:
 
-                subprocess.run(['xdg-open', output_path])
+                subprocess.run(['xdg-open', output_dir])
 
     elif results['success']:
-
-        output_path = results.get('output_dir', '')
 
         print(f"\nTo open the folder, run:")
 
         if sys.platform == 'win32':
 
-            print(f'  explorer "{output_path}"')
+            print(f'  explorer "{output_dir}"')
 
         elif sys.platform == 'darwin':
 
-            print(f'  open "{output_path}"')
+            print(f'  open "{output_dir}"')
 
         else:
 
-            print(f'  xdg-open "{output_path}"')
+            print(f'  xdg-open "{output_dir}"')
 
     
 

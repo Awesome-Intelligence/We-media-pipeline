@@ -473,6 +473,55 @@
       margin: 0;
     }
 
+    /* Article type tabs - Notion style */
+    .article-type-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      padding: 4px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: fit-content;
+    }
+
+    .article-type-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 14px;
+      color: var(--text-secondary);
+      background: transparent;
+    }
+
+    .article-type-tab:hover {
+      background: var(--bg-secondary);
+      color: var(--text);
+    }
+
+    .article-type-tab.active {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .article-type-icon {
+      font-size: 16px;
+    }
+
+    .article-type-label {
+      font-weight: 500;
+    }
+
+    .article-type-hint {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-left: 4px;
+    }
+
     /* Creator block - modern input area */
     .creator-block {
       margin-bottom: 24px;
@@ -691,12 +740,34 @@
 
     .notion-step-info {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .notion-step-name {
       font-size: 13px;
       color: var(--text-secondary);
+    }
+
+    .notion-step-files {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .notion-step-file {
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .notion-step-file:hover {
+      background: var(--border);
+      color: var(--text);
     }
 
     .notion-step.active .notion-step-name {
@@ -1486,6 +1557,25 @@
             <p class="page-subtitle">输入主题，一键生成文章、配图和视频</p>
           </div>
 
+          <!-- Article type tabs - Notion style -->
+          <div class="article-type-tabs">
+            <div class="article-type-tab active" data-type="news">
+              <span class="article-type-icon">📰</span>
+              <span class="article-type-label">新闻资讯</span>
+              <span class="article-type-hint">追踪热点</span>
+            </div>
+            <div class="article-type-tab" data-type="tutorial">
+              <span class="article-type-icon">📚</span>
+              <span class="article-type-label">教程指南</span>
+              <span class="article-type-hint">学习教程</span>
+            </div>
+            <div class="article-type-tab" data-type="product">
+              <span class="article-type-icon">🛒</span>
+              <span class="article-type-label">产品评测</span>
+              <span class="article-type-hint">对比测评</span>
+            </div>
+          </div>
+
           <!-- Input block - Notion style -->
           <div class="creator-block">
             <div class="creator-input-wrapper">
@@ -1496,12 +1586,14 @@
                 <input type="text" class="creator-input" id="topicInput" placeholder="输入创作主题，如：人工智能最新进展">
               </div>
               <div class="creator-actions">
-                <span class="creator-label">搜索时间范围</span>
-                <select class="creator-select" id="daysSelect">
-                  <option value="7">最近 7 天</option>
-                  <option value="14">最近 14 天</option>
-                  <option value="30">最近 30 天</option>
-                </select>
+                <div class="days-select-container">
+                  <span class="creator-label">搜索时间范围</span>
+                  <select class="creator-select" id="daysSelect">
+                    <option value="7">最近 7 天</option>
+                    <option value="14">最近 14 天</option>
+                    <option value="30">最近 30 天</option>
+                  </select>
+                </div>
                 <button class="creator-btn" id="startBtn">
                   <svg viewBox="0 0 24 24" width="16" height="16">
                     <path fill="currentColor" d="M8 5v14l11-7z"/>
@@ -1513,7 +1605,7 @@
           </div>
 
           <!-- Steps block - Notion style -->
-          <div class="notion-block">
+          <div class="notion-block" id="stepsBlock" style="display: none;">
             <div class="notion-block-header">
               <span class="notion-block-icon">📊</span>
               <span class="notion-block-title">创作进度</span>
@@ -1523,36 +1615,42 @@
                 <div class="notion-step-dot"></div>
                 <div class="notion-step-info">
                   <div class="notion-step-name">新闻搜索</div>
+                  <div class="notion-step-files" id="stepFiles1"></div>
                 </div>
               </div>
               <div class="notion-step" data-step="2">
                 <div class="notion-step-dot"></div>
                 <div class="notion-step-info">
                   <div class="notion-step-name">文章生成</div>
+                  <div class="notion-step-files" id="stepFiles2"></div>
                 </div>
               </div>
               <div class="notion-step" data-step="3">
                 <div class="notion-step-dot"></div>
                 <div class="notion-step-info">
                   <div class="notion-step-name">配图搜索</div>
+                  <div class="notion-step-files" id="stepFiles3"></div>
                 </div>
               </div>
               <div class="notion-step" data-step="4">
                 <div class="notion-step-dot"></div>
                 <div class="notion-step-info">
                   <div class="notion-step-name">文档导出</div>
+                  <div class="notion-step-files" id="stepFiles4"></div>
                 </div>
               </div>
               <div class="notion-step" data-step="5">
                 <div class="notion-step-dot"></div>
                 <div class="notion-step-info">
                   <div class="notion-step-name">内容提炼</div>
+                  <div class="notion-step-files" id="stepFiles5"></div>
                 </div>
               </div>
               <div class="notion-step" data-step="6">
                 <div class="notion-step-dot"></div>
                 <div class="notion-step-info">
                   <div class="notion-step-name">视频生成</div>
+                  <div class="notion-step-files" id="stepFiles6"></div>
                 </div>
               </div>
             </div>
@@ -1934,6 +2032,8 @@
 
     function openFile(filePath) {
       if (!filePath) return;
+      filePath = decodeURIComponent(filePath);
+      console.log('openFile called with:', filePath);
       api.openFile(filePath).then(r => {
         if (!r.success) toast('打开失败: ' + r.error, 'error');
       }).catch(e => toast('打开失败', 'error'));
@@ -1982,14 +2082,14 @@
       }
       async getConfig() { return this.req('/config'); }
       async saveConfig(cfg) { return this.req('/config', { method: 'POST', body: cfg }); }
-      async searchNews(q, topic, days, n = 10, outputDir = '') {
-        return this.req('/news/search', { method: 'POST', body: { query: q, topic, days, num: n, output_dir: outputDir } });
+      async searchNews(q, topic, days, n = 10, articleType = 'news', outputDir = '') {
+        return this.req('/news/search', { method: 'POST', body: { query: q, topic, days, num: n, type: articleType, output_dir: outputDir } });
       }
       async testModel(data) {
         return this.req('/model/test', { method: 'POST', body: data });
       }
-      async generateArticle(researchFile, outputDir, modelProvider = 'minimax', modelName = null, baseUrl = null) {
-        return this.req('/article/generate', { method: 'POST', body: { research_file: researchFile, output_dir: outputDir, model_provider: modelProvider, model_name: modelName, base_url: baseUrl } });
+      async generateArticle(researchFile, modelProvider = 'minimax', modelName = null, baseUrl = null) {
+        return this.req('/article/generate', { method: 'POST', body: { research_file: researchFile, model_provider: modelProvider, model_name: modelName, base_url: baseUrl } });
       }
       async searchImages(q, n = 6, outputDir = '') {
         return this.req('/images/search', { method: 'POST', body: { query: q, num: n, output_dir: outputDir } });
@@ -1997,8 +2097,12 @@
       async exportWord(articleFile, outputDir, imagesDir = '') {
         return this.req('/word/export', { method: 'POST', body: { article_file: articleFile, output_dir: outputDir, images_dir: imagesDir } });
       }
-      async generateContent(articleFile, outputDir) {
-        return this.req('/content/generate', { method: 'POST', body: { article_file: articleFile, output_dir: outputDir } });
+      async generateContent(articleFile, outputDir, modelProvider = null, modelName = null, baseUrl = null) {
+        const body = { article_file: articleFile, output_dir: outputDir };
+        if (modelProvider) body.model_provider = modelProvider;
+        if (modelName) body.model_name = modelName;
+        if (baseUrl) body.base_url = baseUrl;
+        return this.req('/content/generate', { method: 'POST', body });
       }
       async generateVideo(contentJsonFile, imagesDir, outputDir) {
         return this.req('/video/generate', { method: 'POST', body: { content_json_file: contentJsonFile, images_dir: imagesDir, output_dir: outputDir } });
@@ -2011,6 +2115,15 @@
       }
       async selectDirectory() {
         return this.req('/dialog/select-directory', { method: 'POST' });
+      }
+      async addLog(time, level, message) {
+        return this.req('/log/add', { method: 'POST', body: { time, level, message } });
+      }
+      async listLogs() {
+        return this.req('/log/list', { method: 'GET' });
+      }
+      async clearLogs() {
+        return this.req('/log/clear', { method: 'POST' });
       }
       async readFile(path) {
         return this.req('/file/read', { method: 'POST', body: { path } });
@@ -2044,11 +2157,33 @@
       }
     }
 
+    function addStepFile(step, fileName, filePath) {
+      const filesContainer = $('stepFiles' + step);
+      if (filesContainer) {
+        const fileEl = document.createElement('div');
+        fileEl.className = 'notion-step-file';
+        fileEl.textContent = fileName;
+        fileEl.onclick = () => openFile(filePath);
+        filesContainer.appendChild(fileEl);
+      }
+    }
+
+    function clearStepFiles() {
+      for (let i = 1; i <= 6; i++) {
+        const filesContainer = $('stepFiles' + i);
+        if (filesContainer) {
+          filesContainer.innerHTML = '';
+        }
+      }
+    }
+
     async function stepNews() {
       const topic = $('topicInput').value.trim();
       const days = parseInt($('daysSelect').value);
+      const articleType = document.querySelector('.article-type-tab.active').dataset.type;
       if (!topic) throw new Error('请输入创作主题');
       state.topic = topic;
+      state.articleType = articleType;
       
       // Get default model provider from config
       const cfg = JSON.parse(localStorage.getItem('cfg') || '{}');
@@ -2065,10 +2200,14 @@
         state.baseUrl = baseUrlInput.value || null;
       }
       
-      toast('正在搜索新闻...');
-      logger.info(`搜索新闻: ${topic}, 时间范围: 最近${days}天`);
+      const typeLabels = { news: '新闻', tutorial: '教程', product: '产品' };
+      toast(`正在搜索${typeLabels[articleType]}...`);
+      logger.info(`搜索${typeLabels[articleType]}: ${topic}, 时间范围: 最近${days}天`);
       try {
-        const r = await api.searchNews(topic, topic, days, 10);
+        const r = await api.searchNews(topic, topic, days, 10, articleType);
+        if (!r.success) {
+          throw new Error(r.error || '搜索失败');
+        }
         state.news = r.results?.results || [];
         state.outputDir = r.output_dir || '';
         state.researchFile = r.research_file || '';
@@ -2078,6 +2217,10 @@
         } else {
           logger.success(`找到 ${state.news.length} 条新闻`);
           logger.info(`输出目录: ${state.outputDir}`);
+          if (state.researchFile) {
+            const fileName = state.researchFile.split(/[\/\\]/).pop();
+            addStepFile(1, fileName, state.researchFile);
+          }
           try {
             addToHistory('news', {
               topic,
@@ -2105,13 +2248,17 @@
       toast('正在生成文章...');
       logger.info('开始生成文章（调用 article-writer 技能）...');
       try {
-        const r = await api.generateArticle(state.researchFile, state.outputDir, state.modelProvider, state.modelName, state.baseUrl);
+        const r = await api.generateArticle(state.researchFile, state.modelProvider, state.modelName, state.baseUrl);
         state.article = r.article || '';
         state.articleFile = r.file || '';
         if (!state.article) {
           throw new Error('文章生成失败，返回内容为空');
         }
         logger.success(`文章生成完成，长度: ${state.article.length} 字符`);
+        if (state.articleFile) {
+          const fileName = state.articleFile.split(/[\/\\]/).pop();
+          addStepFile(2, fileName, state.articleFile);
+        }
         addToHistory('articles', {
           topic: state.topic,
           date: new Date().toISOString(),
@@ -2135,6 +2282,9 @@
         state.imagesDir = r.images_dir || '';
         logger.success(`找到 ${state.images.length} 张配图`);
         logger.info(`配图目录: ${state.imagesDir}`);
+        if (state.imagesDir) {
+          addStepFile(3, `${state.images.length} 张图片`, state.imagesDir);
+        }
       } catch (e) {
         state.images = [];
         logger.error('配图搜索失败: ' + e.message);
@@ -2158,6 +2308,10 @@
         const r = await api.exportWord(state.articleFile, state.outputDir, state.imagesDir);
         state.files.push({ name: '04_article.docx', path: r.path || '' });
         logger.success(`Word 文档已导出: ${r.path}`);
+        if (r.path) {
+          const fileName = r.path.split(/[\/\\]/).pop();
+          addStepFile(4, fileName, r.path);
+        }
       } catch (e) {
         state.files.push({ name: '04_article.docx', path: '导出失败' });
         logger.error('Word导出失败: ' + e.message);
@@ -2172,9 +2326,13 @@
       toast('正在提炼视频内容...');
       logger.info('开始提炼内容（调用 article-shorter 技能）...');
       try {
-        const r = await api.generateContent(state.articleFile, state.outputDir);
+        const r = await api.generateContent(state.articleFile, state.outputDir, state.modelProvider, state.modelName, state.baseUrl);
         state.files.push({ name: '05_content.json', path: r.file || '' });
         logger.success(`content.json 已生成: ${r.file}`);
+        if (r.file) {
+          const fileName = r.file.split(/[\/\\]/).pop();
+          addStepFile(5, fileName, r.file);
+        }
       } catch (e) {
         state.files.push({ name: '05_content.json', path: '生成失败' });
         logger.error('内容提炼失败: ' + e.message);
@@ -2192,6 +2350,10 @@
         const r = await api.generateVideo(contentJsonFile, state.imagesDir, state.outputDir);
         state.files.push({ name: '06_video.mp4', path: r.path || '' });
         logger.success(`视频已生成: ${r.path}`);
+        if (r.path) {
+          const fileName = r.path.split(/[\/\\]/).pop();
+          addStepFile(6, fileName, r.path);
+        }
         addToHistory('videos', {
           topic: state.topic,
           date: new Date().toISOString(),
@@ -2290,20 +2452,36 @@
     const LOG_MAX = 500;
     let logs = [];
 
-    function addLog(level, message) {
+    function addLog(level, message, toServer = false) {
       const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       logs.push({ time, level, message });
       if (logs.length > LOG_MAX) logs = logs.slice(-LOG_MAX);
       renderLogs();
+      
+      if (toServer) {
+        api.addLog(time, level, message).catch(e => console.error('保存日志失败:', e));
+      }
     }
 
     const logger = {
-      info: (msg) => addLog('info', msg),
-      success: (msg) => addLog('success', msg),
-      warn: (msg) => addLog('warning', msg),
-      error: (msg) => addLog('error', msg)
+      info: (msg) => addLog('info', msg, true),
+      success: (msg) => addLog('success', msg, true),
+      warn: (msg) => addLog('warning', msg, true),
+      error: (msg) => addLog('error', msg, true)
     };
 
+    async function loadLogs() {
+      try {
+        const r = await api.listLogs();
+        if (r.success && r.logs) {
+          logs = r.logs;
+        }
+      } catch (e) {
+        console.error('加载日志失败:', e);
+      }
+      renderLogs();
+    }
+    
     function renderLogs() {
       const container = $('logContainer');
       if (!container) return;
@@ -2545,6 +2723,7 @@
     function clearLogs() {
       logs = [];
       renderLogs();
+      api.clearLogs().catch(e => console.error('清除后端日志失败:', e));
     }
 
     async function loadConfig() {
@@ -2725,7 +2904,7 @@
     }
 
     // Page switching
-    function showPage(pageId) {
+    async function showPage(pageId) {
       document.querySelectorAll('.page-view').forEach(el => el.style.display = 'none');
       const page = document.getElementById('view-' + pageId);
       if (page) page.style.display = 'block';
@@ -2734,16 +2913,22 @@
       const navItem = document.querySelector(`.nav-item[data-page="${pageId}"]`);
       if (navItem) navItem.classList.add('active');
 
-      if (pageId === 'projects') { scanLibrary(); showProjectsList(); }
+      if (pageId === 'projects') { 
+        $('projectsGrid').innerHTML = '<div class="empty">正在加载项目...</div>';
+        await scanLibrary(); 
+        showProjectsList(); 
+      }
       if (pageId === 'settings') { loadConfig(); }
       if (pageId === 'article-fetcher') { loadArticleFetcherConfig(); }
-      if (pageId === 'logs') renderLogs();
+      if (pageId === 'logs') { loadLogs(); }
     }
 
     let currentProject = null;
 
     function showProjectDetail(project) {
       currentProject = project;
+      console.log('showProjectDetail called for:', project.name);
+      console.log('Project path:', project.path);
       const detail = $('projectDetail');
       const files = project.files || [];
       const researchFile = files.find(f => f.type === 'article' && f.name.startsWith('01_'));
@@ -2751,7 +2936,14 @@
       const wordFile = files.find(f => f.type === 'word');
       const videoFile = files.find(f => f.type === 'video');
       const contentFile = files.find(f => f.type === 'content');
+      
+      console.log('Files found:', {
+        videoFile: videoFile ? videoFile.path : null,
+        contentFile: contentFile ? contentFile.path : null
+      });
 
+      const encodePath = (path) => encodeURIComponent(path);
+      
       detail.innerHTML = `
         <div class="notion-block">
           <div class="notion-block-header">
@@ -2767,11 +2959,11 @@
             <span class="notion-block-title">项目文件</span>
           </div>
           <div class="file-list">
-            ${researchFile ? `<div class="file-row" onclick="openFile('${researchFile.path}')"><span>📄 研究资料</span><span>${researchFile.name}</span></div>` : ''}
-            ${articleFile ? `<div class="file-row" onclick="openFile('${articleFile.path}')"><span>📝 文章</span><span>${articleFile.name}</span></div>` : ''}
-            ${wordFile ? `<div class="file-row" onclick="openFile('${wordFile.path}')"><span>📄 Word</span><span>${wordFile.name}</span></div>` : ''}
-            ${contentFile ? `<div class="file-row" onclick="openFile('${contentFile.path}')"><span>📋 内容</span><span>${contentFile.name}</span></div>` : ''}
-            ${videoFile && contentFile ? `<div class="file-row" onclick="openVideoModalFromProject('${videoFile.path}', '${contentFile.path}', '${currentProject.path.replace(/\\/g, '\\\\')}')"><span>🎬 视频</span><span>${videoFile.name}</span></div>` : ''}
+            ${researchFile ? `<div class="file-row" onclick="openFile('${encodePath(researchFile.path)}')"><span>📄 研究资料</span><span>${researchFile.name}</span></div>` : ''}
+            ${articleFile ? `<div class="file-row" onclick="openFile('${encodePath(articleFile.path)}')"><span>📝 文章</span><span>${articleFile.name}</span></div>` : ''}
+            ${wordFile ? `<div class="file-row" onclick="openFile('${encodePath(wordFile.path)}')"><span>📄 Word</span><span>${wordFile.name}</span></div>` : ''}
+            ${contentFile ? `<div class="file-row" onclick="openFile('${encodePath(contentFile.path)}')"><span>📋 内容</span><span>${contentFile.name}</span></div>` : ''}
+            ${videoFile && contentFile ? `<div class="file-row" onclick="openVideoModalFromProject('${encodePath(videoFile.path)}', '${encodePath(contentFile.path)}', '${encodeURIComponent(project.path)}')"><span>🎬 视频</span><span>${videoFile.name}</span></div>` : ''}
           </div>
         </div>
       `;
@@ -2789,30 +2981,80 @@
     }
 
     function openVideoModalFromProject(videoPath, contentPath, projectPath) {
+      videoPath = decodeURIComponent(videoPath);
+      contentPath = decodeURIComponent(contentPath);
+      projectPath = decodeURIComponent(projectPath);
+      
+      console.log('openVideoModalFromProject called:');
+      console.log('  videoPath:', videoPath);
+      console.log('  contentPath:', contentPath);
+      console.log('  projectPath:', projectPath);
+      
       const projects = window.libraryData || [];
       const project = projects.find(p => p.path === projectPath);
-      if (!project) return;
+      if (!project) {
+        console.log('Project not found with path:', projectPath);
+        return;
+      }
       const videoFile = project.files.find(f => f.type === 'video');
       const imageFiles = project.files.filter(f => f.type === 'image');
       currentVideoData = {
         name: project.name,
         path: project.path,
         video: videoFile,
-        contentFile: contentPath,
+        contentFile: { path: contentPath },
         thumbnail: imageFiles[0]?.path || ''
       };
       $('videoModalTitle').textContent = project.name;
       const videoSrc = API_BASE + '/file/stream/' + encodeURIComponent(videoFile.path).replace(/\\/g, '/');
       $('videoPlayer').src = videoSrc;
       $('videoPlayer').load();
-      api.readFile(contentPath).then(r => {
-        if (r.success && r.data) {
-          $('contentMainTitle').value = r.data.main_title || '';
-          $('contentSubTitle').value = r.data.sub_title || '';
-          $('contentTextSections').value = (r.data.text_sections || []).join('\n');
-          $('contentOutro').value = r.data.outro_text || '';
-        }
-      });
+      
+      if (contentPath) {
+        console.log('Reading content file:', contentPath);
+        
+        const mainTitleEl = $('contentMainTitle');
+        const subTitleEl = $('contentSubTitle');
+        const textSectionsEl = $('contentTextSections');
+        const outroEl = $('contentOutro');
+        
+        console.log('Form elements found:', {
+          mainTitleEl: !!mainTitleEl,
+          subTitleEl: !!subTitleEl,
+          textSectionsEl: !!textSectionsEl,
+          outroEl: !!outroEl
+        });
+        
+        api.readFile(contentPath).then(r => {
+          console.log('API response:', JSON.stringify(r));
+          if (r.success && r.data) {
+            console.log('Setting form values from r.data:', r.data);
+            if (mainTitleEl) mainTitleEl.value = r.data.main_title || '';
+            if (subTitleEl) subTitleEl.value = r.data.sub_title || '';
+            if (textSectionsEl) textSectionsEl.value = (r.data.text_sections || []).join('\n');
+            if (outroEl) outroEl.value = r.data.outro_text || '';
+          } else if (r.success && r.content) {
+            console.log('Parsing content from r.content:', r.content.substring(0, 200) + '...');
+            try {
+              const data = JSON.parse(r.content);
+              console.log('Parsed data:', data);
+              if (mainTitleEl) mainTitleEl.value = data.main_title || '';
+              if (subTitleEl) subTitleEl.value = data.sub_title || '';
+              if (textSectionsEl) textSectionsEl.value = (data.text_sections || []).join('\n');
+              if (outroEl) outroEl.value = data.outro_text || '';
+            } catch (e) {
+              console.error('JSON parse error:', e);
+            }
+          } else {
+            console.error('API call failed:', r.error);
+          }
+        }).catch(e => {
+          console.error('API error:', e);
+        });
+      } else {
+        console.log('No contentPath provided');
+      }
+      
       $('videoModal').style.display = 'block';
     }
 
@@ -2887,6 +3129,9 @@
         showPage(page);
       });
     });
+    
+    // 初始化加载日志
+    loadLogs();
 
     $('startBtn').addEventListener('click', async () => {
       const topic = $('topicInput').value.trim();
@@ -2894,7 +3139,26 @@
       $('startBtn').disabled = true;
       $('startBtn').textContent = '创作中...';
       logger.info('开始创作流程');
+      
+      // 显示进度条
+      $('stepsBlock').style.display = 'block';
+      
+      // 清空之前的步骤文件
+      clearStepFiles();
+      
+      // 重置步骤状态
       for (let i = 1; i <= 6; i++) {
+        STEPS[i] = '';
+        const stepEl = document.querySelector('.notion-step[data-step="' + i + '"]');
+        if (stepEl) {
+          stepEl.classList.remove('active', 'completed', 'error');
+        }
+      }
+      
+      const articleType = document.querySelector('.article-type-tab.active').dataset.type;
+      const maxStep = articleType === 'tutorial' ? 5 : 6;
+      
+      for (let i = 1; i <= maxStep; i++) {
         const ok = await runStep(i);
         if (!ok) {
           logger.error('流程中断于步骤 ' + i);
@@ -2905,7 +3169,7 @@
       $('startBtn').disabled = false;
       $('startBtn').textContent = '开始创作';
       const completed = Object.values(STEPS).filter(s => s === 'success').length;
-      if (completed === 6) {
+      if (completed === maxStep) {
         logger.success('创作流程全部完成');
         toast('创作完成！');
       }
@@ -2981,8 +3245,51 @@
       if (e.key === 'Enter') { $('startBtn').click(); }
     });
 
+    // Article type tab switching
+    document.querySelectorAll('.article-type-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.article-type-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        updateArticleTypeUI();
+      });
+    });
+
+    function updateArticleTypeUI() {
+      const type = document.querySelector('.article-type-tab.active').dataset.type;
+      const daysContainer = document.querySelector('.days-select-container');
+      
+      if (type === 'news') {
+        daysContainer.style.display = 'flex';
+      } else {
+        daysContainer.style.display = 'none';
+      }
+      
+      updateStepsForType(type);
+    }
+
+    function updateStepsForType(type) {
+      const steps = {
+        news: ['新闻搜索', '文章生成', '配图搜索', '文档导出', '内容提炼', '视频生成'],
+        tutorial: ['教程搜索', '教程整理', '配图搜索', '文档导出', '内容提炼'],
+        product: ['产品搜索', '评测生成', '配图搜索', '文档导出', '内容提炼', '视频生成']
+      };
+      
+      const stepNames = steps[type] || steps.news;
+      const stepElements = document.querySelectorAll('.notion-step');
+      
+      stepElements.forEach((el, index) => {
+        if (index < stepNames.length) {
+          el.style.display = 'flex';
+          el.querySelector('.notion-step-name').textContent = stepNames[index];
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    }
+
     logger.info('创作方舟已启动');
     loadConfig();
+    updateArticleTypeUI();
   </script>
 </body>
 </html>

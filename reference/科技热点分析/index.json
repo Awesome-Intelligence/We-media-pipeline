@@ -1,0 +1,50 @@
+{
+  "topic": "科技热点分析",
+  "updated_at": "2026-05-21",
+  "articles": [
+    {
+      "title": "火了两个追求 AGI 的公司为什么都开始雇人上门了",
+      "url": "",
+      "saved_at": "2026-05-13",
+      "files": [
+        "FDE_火了两个追求_AGI_的公司为什么都开始雇人上门了.html",
+        "FDE_火了两个追求_AGI_的公司为什么都开始雇人上门了.pdf",
+        "FDE_火了两个追求_AGI_的公司为什么都开始雇人上门了.png"
+      ],
+      "note": "来源：article-writer/references/articles"
+    },
+    {
+      "title": "新规发布丨智能体规范应用与创新发展实施意见解读",
+      "url": "",
+      "saved_at": "2026-05-13",
+      "files": [
+        "新规发布丨智能体规范应用与创新发展实施意见解读.html",
+        "新规发布丨智能体规范应用与创新发展实施意见解读.pdf"
+      ],
+      "note": "来源：article-writer/references/articles"
+    },
+    {
+      "title": "没绷住美团在龙虾的路上又双叕搞了个大动作",
+      "url": "",
+      "saved_at": "2026-05-13",
+      "files": [
+        "没绷住美团在龙虾的路上又双叕搞了个大动作.html",
+        "没绷住美团在龙虾的路上又双叕搞了个大动作.pdf",
+        "没绷住美团在龙虾的路上又双叕搞了个大动作.png"
+      ],
+      "note": "来源：article-writer/references/articles"
+    },
+    {
+      "title": "笑不活了家人们大模型为啥把马嘉祺叫成了马里奥嘉豪",
+      "url": "",
+      "saved_at": "2026-05-13",
+      "files": [
+        "笑不活了家人们大模型为啥把马嘉祺叫成了马里奥嘉豪.html",
+        "笑不活了家人们大模型为啥把马嘉祺叫成了马里奥嘉豪.pdf",
+        "笑不活了家人们大模型为啥把马嘉祺叫成了马里奥嘉豪.png"
+      ],
+      "note": "来源：article-writer/references/articles"
+    }
+  ],
+  "note": "内置风格指南源自 article-writer/references/style-guide.md（12篇公众号文章学习总结，2026-05-13）"
+}

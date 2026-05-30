@@ -80,7 +80,7 @@ def get_default_results():
     return config.get('news_search', {}).get('default_results', 10)
 
 
-def search_news_tavily(query, max_results=10, days=7, api_key=None):
+def search_news_tavily(query, max_results=10, days=7, api_key=None, content_type='news'):
     """
     Search news using Tavily API.
     
@@ -89,6 +89,7 @@ def search_news_tavily(query, max_results=10, days=7, api_key=None):
         max_results: Maximum number of results (default: 10)
         days: Search news from last N days (default: 7)
         api_key: Tavily API key
+        content_type: Content type ('news', 'tutorial', 'product')
     
     Returns:
         dict: Search results
@@ -117,11 +118,17 @@ def search_news_tavily(query, max_results=10, days=7, api_key=None):
     try:
         url = "https://api.tavily.com/search"
         
+        topic_map = {
+            'news': 'news',
+            'tutorial': 'general',
+            'product': 'general'
+        }
+        
         payload = {
             "api_key": api_key,
             "query": query,
             "search_depth": "advanced",
-            "topic": "news",
+            "topic": topic_map.get(content_type, "news"),
             "include_answer": True,
             "include_images": True,
             "include_raw_content": False,
@@ -286,6 +293,8 @@ def main():
     parser.add_argument('-f', '--format', choices=['text', 'json', 'markdown'], default='text',
                         help='Output format (default: text)')
     parser.add_argument('-o', '--output', help='Save results to file')
+    parser.add_argument('-t', '--type', choices=['news', 'tutorial', 'product'], default='news',
+                        help='Content type (default: news)')
     
     args = parser.parse_args()
     
@@ -295,6 +304,7 @@ def main():
     query = args.query
     days = args.days if args.days is not None else default_days
     num = args.num if args.num is not None else default_results
+    content_type = args.type
     
     api_key = get_api_key(args.key)
     
@@ -319,7 +329,8 @@ def main():
             query=query,
             max_results=num,
             days=days,
-            api_key=api_key
+            api_key=api_key,
+            content_type=content_type
         )
         
         output = format_output(results, args.format)
